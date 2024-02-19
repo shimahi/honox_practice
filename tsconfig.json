@@ -1,0 +1,24 @@
+{
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "lib": ["esnext", "DOM"],
+    "types": ["vite/client", "@cloudflare/workers-types", "bun-types"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@schemas": ["db/schemas/index.ts"],
+      "@schemas/*": ["db/schemas/*"],
+      "@server": ["server/index.ts"],
+      "@server/*": ["server/*"]
+    }
+  }
+}

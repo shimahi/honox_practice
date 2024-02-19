@@ -1,0 +1,6 @@
+[[d1_databases]]
+binding = "DB"
+database_name = "D1のデータベース名"
+database_id = "D1のデータベースID"
+preview_database_id = "DB"
+migrations_dir = "./db/migrations"

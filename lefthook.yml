@@ -1,0 +1,11 @@
+pre-commit:
+  commands:
+    typecheck:
+      glob: '*.{ts,tsx}'
+      run: bun type
+    lint-and-format:
+      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}'
+      run: bun check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
+    test:
+      glob: 'server/**/*.{ts,tsx}'
+      run: bun run test
