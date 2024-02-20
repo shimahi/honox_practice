@@ -16,9 +16,7 @@
     "paths": {
       "@app/*": ["app/*"],
       "@schemas": ["db/schemas/index.ts"],
-      "@schemas/*": ["db/schemas/*"],
-      "@server": ["server/index.ts"],
-      "@server/*": ["server/*"]
+      "@schemas/*": ["db/schemas/*"]
     }
   }
 }

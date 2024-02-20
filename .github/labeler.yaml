@@ -4,5 +4,3 @@ Public:
   - 'public/**/*'
 DB:
   - 'db/**/*'
-Server:
-  - 'server/**/*'

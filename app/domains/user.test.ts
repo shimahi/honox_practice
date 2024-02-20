@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, jest, mock, test } from 'bun:test'
-import { ContextMock, userDomainMock } from '@server/__tests__'
+import { ContextMock, userDomainMock } from '@app/__tests__'
 import { UserDomain } from './user'
 
 /**
@@ -8,7 +8,7 @@ import { UserDomain } from './user'
  * =============================
  */
 // UserDomainの依存モジュールをモックする
-mock.module('@server/repositories/user', () => ({
+mock.module('@app/repositories/user', () => ({
   UserRepository: jest.fn().mockImplementation(() => userDomainMock.repository),
 }))
 afterAll(() => {

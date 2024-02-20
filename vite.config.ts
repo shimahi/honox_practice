@@ -9,9 +9,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: [
         { find: '@app', replacement: '/app' },
-        { find: '@server', replacement: '/server' },
         { find: '@schemas', replacement: '/db/schemas' },
-        { find: '@migrations', replacement: '/db/migrations' },
       ],
     },
   }

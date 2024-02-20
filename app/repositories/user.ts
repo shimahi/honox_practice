@@ -1,5 +1,5 @@
+import { RepositoryBase } from '@app/repositories/_repositoryBase'
 import { users } from '@schemas'
-import { RepositoryBase } from '@server/repositories/_repositoryBase'
 
 export class UserRepository extends RepositoryBase {
   async getUsers() {

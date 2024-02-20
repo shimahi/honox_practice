@@ -19,10 +19,10 @@
     "// ローカルDBにシードデータを投入する": "",
     "seed:dev": "$npm_execpath run migrate:dev && $npm_execpath run ./db/seed.ts",
     "type": "tsc -p ./tsconfig.json",
-    "lint": "biome lint ./app ./server",
-    "format": "biome format ./app ./server --write",
-    "check": "biome check --apply ./app ./server",
-    "test": "$npm_execpath test server/repositories/ && $npm_execpath test server/domains/"
+    "lint": "biome lint ./app",
+    "format": "biome format ./app --write",
+    "check": "biome check --apply ./app",
+    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/"
   },
   "private": true,
   "dependencies": {

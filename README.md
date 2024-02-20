@@ -30,18 +30,26 @@ $ bun setup
 $ bun dev
 ```
 
-→  http://localhost:5173/ にアプリが起動する
+→ http://localhost:5173/ にアプリが起動する
 
 ### ディレクトリ構成
 
 - .mf/ (ignored) ローカル環境データベースの保存ディレクトリ
 
-- **app/** フロントエンドの実装
+- **app/** アプリケーションの実装
 
-  - islands フロントエンド側でインタラクションを行うコンポーネントはここに記述する
+  - \_\_tests\_\_/ テストコードに用いる処理を定義する
+    - fixtures/ DB のテストデータに関する処理
+    - mocks/ 各処理系のモックオブジェクトを作成
+  - **domains/** ドメインロジックを記述する
+  - **islands/** フロントエンド側でインタラクションを行うコンポーネントはここに記述する
     ここ以外でクライアントサイドのロジックは動かないので注意
-  - routes ページコンポーネントの記述ファイル File Based Routing に基づいてテンプレートを作成する
+  - **routes/** ページコンポーネントの記述ファイル File Based Routing に基づいてテンプレートを作成する
     - \_renderer.tsx ページコンポーネントのレンダリングを行う。Hono の [JSX Renderer Middleware](https://hono.dev/middleware/builtin/jsx-renderer) が呼ばれるファイル
+  - **repositories/** データベースを扱う処理
+  - **services/** 外部サービスを扱うためのモジュールに関する処理
+  - **utils/** ドメインに依存しないユーティリティロジックを記載する
+  - **validators/** 入力バリデーションを定義する
   - client.ts フロント側のエントリーポイント
   - server.ts サーバー側のエントリーポイント
   - style.css グローバルで参照する CSS (リセット CSS を記述している)
@@ -49,22 +57,13 @@ $ bun dev
 - **db/** データベース関連
 
   - migrations drizzle-kit によって生成されたマイグレーションファイルが格納される
-  - schemas DB のスキーマを記述する
+  - **schemas** DB のスキーマを記述する
   - seed.ts ローカル環境 DB に仮データを挿入するためのシーディング処理を記述する
 
 - **public/** Web サーバ上に直接配置するファイル
 
   - static の静的ファイルを格納するディレクトリ
     - style.css リモート環境ではこちらを参照している。 app/style.css と同じ内容
-
-- **server/** サーバーサイドロジックの実装
-
-  - \_\_tests\_\_ テストコードに用いる処理を定義する
-    - fixtures DB のテストデータに関する処理
-    - mocks 各処理系のモックオブジェクトを作成
-  - domains ドメインロジックを記述する
-  - repositories データベースを扱う処理
-  - services 外部サービスを扱うためのモジュールに関する処理
 
 - ▼ その他
   - .env (ignored) ローカルで参照する環境変数ファイル
