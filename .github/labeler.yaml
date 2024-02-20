@@ -1,0 +1,8 @@
+App:
+  - 'apps/**/*'
+Public:
+  - 'public/**/*'
+DB:
+  - 'db/**/*'
+Server:
+  - 'server/**/*'
