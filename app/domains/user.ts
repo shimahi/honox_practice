@@ -1,5 +1,5 @@
-import type { Context } from '@app/global'
-import { UserRepository } from '@app/repositories/user'
+import type { Context } from '@/global'
+import { UserRepository } from '@/repositories/user'
 
 export class UserDomain {
   private readonly repository

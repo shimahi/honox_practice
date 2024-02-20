@@ -1,5 +1,5 @@
-import { UserDomain } from '@app/domains/user'
-import Counter from '@app/islands/counter'
+import { UserDomain } from '@/domains/user'
+import Counter from '@/islands/counter'
 import { env } from 'hono/adapter'
 import { css } from 'hono/css'
 import { createRoute } from 'honox/factory'

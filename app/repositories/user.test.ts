@@ -12,9 +12,9 @@ import {
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 
-import { ContextMock, userFixture } from '@app/__tests__'
-import { UserRepository } from '@app/repositories/user'
-import { users } from '@schemas'
+import { ContextMock, userFixture } from '@/__tests__'
+import { UserRepository } from '@/repositories/user'
+import { users } from '@/schemas'
 
 /**
  * =============================

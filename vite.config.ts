@@ -8,8 +8,8 @@ export default defineConfig(({ mode }) => {
   const common: UserConfig = {
     resolve: {
       alias: [
-        { find: '@app', replacement: '/app' },
-        { find: '@schemas', replacement: '/db/schemas' },
+        { find: '@/schemas', replacement: '/db/schemas' },
+        { find: '@', replacement: '/app' },
       ],
     },
   }

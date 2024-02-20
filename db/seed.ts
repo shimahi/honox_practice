@@ -5,8 +5,8 @@
  */
 
 import { Database } from 'bun:sqlite'
-import { userFixture } from '@app/__tests__'
-import type { User } from '@schemas/type'
+import { userFixture } from '@/__tests__'
+import type { User } from '@/schemas/type'
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 
 const sqlite = new Database('./.mf/d1/DB/db.sqlite')

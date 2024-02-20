@@ -14,9 +14,9 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["app/*"],
-      "@schemas": ["db/schemas/index.ts"],
-      "@schemas/*": ["db/schemas/*"]
+      "@/schemas": ["db/schemas/index.ts"],
+      "@/schemas/*": ["db/schemas/*"],
+      "@/*": ["app/*"]
     }
   }
 }

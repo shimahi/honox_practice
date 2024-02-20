@@ -1,5 +1,5 @@
 import { jest } from 'bun:test'
-import type { Context } from '@app/global'
+import type { Context } from '@/global'
 
 /**
  * @description
