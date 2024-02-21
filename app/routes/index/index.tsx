@@ -22,14 +22,34 @@ export default createRoute(async c => {
       >
         User list
       </h2>
-      <Counter />
-      <h3
+      <div
         class={css`
-          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
         `}
       >
-        env name: {NAME}{' '}
-      </h3>
+        <Counter />
+        <h3>env name: {NAME} </h3>
+      </div>
+      <div
+        class={css`
+          margin-top: 20px;
+          margin-bottom: 20px;
+          display: flex;
+          flex-direction: column;
+          row-gap: 20px;
+        `}
+      >
+        <div>
+          <img src='/static/images/ssl.jpg' alt='Steller Sea Lion' />
+        </div>
+        <div>
+          <img src='/static/images/ssl2.jpg' alt='Steller Sea Lion' />
+        </div>
+        <div>
+          <img src='/static/images/ssl3.jpg' alt='Steller Sea Lion' />
+        </div>
+      </div>
       <div>
         {users?.map(u => (
           <div
