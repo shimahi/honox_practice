@@ -10,7 +10,7 @@ export default jsxRenderer(({ children, title }) => {
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         {title ? <title>{title}</title> : ''}
         {import.meta.env.PROD ? (
-          <link href='/static/style.css' reïl='stylesheet' />
+          <link href='/static/assets/style.css' reïl='stylesheet' />
         ) : (
           <link href='/app/style.css' rel='stylesheet' />
         )}
