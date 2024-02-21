@@ -1,6 +1,5 @@
 import { UserDomain } from '@/domains/user'
 import Counter from '@/islands/counter'
-import { env } from 'hono/adapter'
 import { css } from 'hono/css'
 import { createRoute } from 'honox/factory'
 
@@ -8,7 +7,7 @@ export default createRoute(async c => {
   const userDomain = new UserDomain(c)
   const users = await userDomain.getUsers()
 
-  const { NAME } = env(c)
+  const { NAME } = c.env
 
   return c.render(
     <div>

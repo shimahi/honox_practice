@@ -1,10 +1,12 @@
 import pages from '@hono/vite-cloudflare-pages'
-import pagesPlugin from '@hono/vite-dev-server/cloudflare-pages'
 import honox from 'honox/vite'
 import client from 'honox/vite/client'
 import { type UserConfig, defineConfig } from 'vite'
+import { getPlatformProxy } from 'wrangler'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }) => {
+  const { env, dispose } = await getPlatformProxy()
+
   const common: UserConfig = {
     resolve: {
       alias: [
@@ -33,12 +35,11 @@ export default defineConfig(({ mode }) => {
     plugins: [
       honox({
         devServer: {
-          entry: './app/server.ts',
+          env,
           plugins: [
-            pagesPlugin({
-              d1Databases: ['DB'],
-              d1Persist: true,
-            }),
+            {
+              onServerClose: dispose,
+            },
           ],
         },
       }),
