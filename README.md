@@ -18,24 +18,28 @@
 
 ### ローカル環境構築
 
+0. Cloudflare Pages のプロジェクトと Cloudflare D1 のプロジェクトを作成する。
+
+- [Get started - Pages](https://developers.cloudflare.com/pages/get-started/guide/)
+
+- [Get started - D1](https://developers.cloudflare.com/d1/get-started)
+
+wrangler を用いて CLI から Cloudflare にログインする
+
 1. ローカル環境のセットアップコマンドを実行。
-
-- パッケージインストール
-- 環境変数ファイルのコピー
-
-が行われる。
+   パッケージインストールと環境変数ファイルのコピーが行われる。
 
 ```bash
 # ローカル環境のセットアップ
 $ bun setup
 ```
 
-2. 依存パッケージのインストール、ローカル DB の作成、環境変数ファイルのコピーが行われるので、これらを設定する
+2. コピーされた環境変数ファイルに対して、プロジェクトやアプリの情報を記述する。
 
 - `.dev.vars` → アプリで使用する環境変数
 - `wrangler.toml` → Cloudflare プロジェクトの設定
 
-また、package.json のスクリプトに書かれている `honox-db` 文字列も、自身の D1 プロジェクトの名前に変更すること
+また、package.json スクリプトに書かれている `honox-db` 文字列も、自身の D1 プロジェクトの名前に変更すること
 
 3. ローカル DB にマイグレーションを適用し、仮データを挿入する。
 
