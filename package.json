@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "// git clone したら最初にやる": "",
-    "setup": "$npm_execpath install && $npm_execpath run seed:dev && cp .dev.vars.example .dev.vars && cp wrangler.toml.example wrangler.toml",
+    "setup": "$npm_execpath install && cp -n .dev.vars.example .dev.vars && cp -n wrangler.toml.example wrangler.toml",
     "// ローカルサーバーの起動": "",
     "dev": "vite",
     "// アプリのビルド": "",

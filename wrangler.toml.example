@@ -1,3 +1,6 @@
+account_id = "CloudflareのアカウントID"
+compatibility_date = "プロジェクトのcompatibility_date"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "D1のデータベース名"
