@@ -36,7 +36,7 @@ $ bun setup
 
 2. コピーされた環境変数ファイルに対して、プロジェクトやアプリの情報を記述する。
 
-- `.dev.vars` → アプリで使用する環境変数
+- `.env` → アプリで使用する環境変数
 - `wrangler.toml` → Cloudflare プロジェクトの設定
 
 また、package.json スクリプトに書かれている `honox-db` 文字列も、自身の D1 プロジェクトの名前に変更すること
@@ -87,7 +87,7 @@ $ bun dev
     - style.css リモート環境ではこちらを参照している。 app/style.css と同じ内容
 
 - ▼ その他
-  - .dev.vars (ignored) アプリのローカル環境で使用する環境変数
+  - .env (ignored) アプリのローカル環境で使用する環境変数
   - .gitignore (ignored) Git の管理対象外とするファイルを記述する
   - biome.json フォーマットと Linter を兼ねる Biome の設定ファイル
   - bun.lockb パッケージとその依存関係のバージョンを固定するためのファイル
