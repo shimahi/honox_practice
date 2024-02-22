@@ -14,4 +14,16 @@ export class UserDomain {
   async getUsers() {
     return await this.repository.getUsers()
   }
+
+  /**
+   * Googleアカウントでログインする。新規の場合はユーザーを作成する。
+   * @param {AuthenticateOptions} option 認証成功・失敗時のリダイレクト先をsuccessRedirect・failureRedirectで指定する。
+   */
+  async loginWithGoogle(args: unknown) {
+    // return this.authService.authenticateWithGoogle(async ({ profile }) => {
+    //   if (!profile || !profile.id)
+    //     throw new Error('認証情報の取得に失敗しました。')
+    //   // アカウント情報からユーザーを取得/作成する
+    //   return this.repository.findOrCreateUser(profile)
+  }
 }
