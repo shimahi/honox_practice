@@ -4,18 +4,18 @@ import { Script } from 'honox/server'
 
 export default jsxRenderer(({ children, title }) => {
   return (
-    <html lang='en'>
+    <html lang="en">
       <head>
-        <meta charset='UTF-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {title ? <title>{title}</title> : ''}
         {import.meta.env.PROD ? (
-          <link href='/static/style.css' rel='stylesheet' />
+          <link href="/static/style.css" rel="stylesheet" />
         ) : (
-          <link href='/app/style.css' rel='stylesheet' />
+          <link href="/app/style.css" rel="stylesheet" />
         )}
         <Style />
-        <Script src='/app/client.ts' />
+        <Script src="/app/client.ts" />
       </head>
       <body>
         <div
