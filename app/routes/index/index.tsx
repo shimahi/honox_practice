@@ -1,8 +1,15 @@
 import { UserDomain } from '@/domains/user'
 import Counter from '@/islands/counter'
+import { Hono } from 'hono'
 import { env } from 'hono/adapter'
 import { css } from 'hono/css'
 import { createRoute } from 'honox/factory'
+
+const app = new Hono()
+
+app.get('/auth/google', c => {
+  return c.render(<h1>Google Auth</h1>)
+})
 
 export default createRoute(async c => {
   const userDomain = new UserDomain(c)
@@ -39,13 +46,13 @@ export default createRoute(async c => {
         `}
       >
         <div>
-          <img src='/static/images/ssl.jpg' alt='Steller Sea Lion' />
+          <img src="/static/images/ssl.jpg" alt="Steller Sea Lion" />
         </div>
         <div>
-          <img src='/static/images/ssl2.jpg' alt='Steller Sea Lion' />
+          <img src="/static/images/ssl2.jpg" alt="Steller Sea Lion" />
         </div>
         <div>
-          <img src='/static/images/ssl3.jpg' alt='Steller Sea Lion' />
+          <img src="/static/images/ssl3.jpg" alt="Steller Sea Lion" />
         </div>
       </div>
       <div>

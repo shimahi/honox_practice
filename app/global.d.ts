@@ -10,6 +10,9 @@ declare module 'hono' {
     Bindings: {
       DB: D1Database
       NAME: string
+      GOOGLE_AUTH_CALLBACK_URL: string
+      GOOGLE_AUTH_CLIENT_ID: string
+      GOOGLE_AUTH_CLIENT_SECRET: string
     }
   }
   interface ContextRenderer {
