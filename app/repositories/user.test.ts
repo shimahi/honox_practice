@@ -12,7 +12,7 @@ import {
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 
-import { ContextMock, userFixture } from '@/__tests__'
+import { contextMock, userFixture } from '@/__tests__'
 import { UserRepository } from '@/repositories/user'
 import { users } from '@/schemas'
 import { faker } from '@faker-js/faker'
@@ -52,7 +52,7 @@ afterAll(() => {
  * =============================
  */
 describe('#getUsers', () => {
-  const subject = new UserRepository(ContextMock.env.DB)
+  const subject = new UserRepository(contextMock.env.DB)
 
   const userData1 = userFixture.build()
   const userData2 = userFixture.build()
@@ -71,7 +71,7 @@ describe('#getUsers', () => {
 })
 
 describe('#getUserByGoogleProfileId', () => {
-  const subject = new UserRepository(ContextMock.env.DB)
+  const subject = new UserRepository(contextMock.env.DB)
   const googleProfileId = faker.string.uuid()
 
   const userData1 = userFixture.build()
