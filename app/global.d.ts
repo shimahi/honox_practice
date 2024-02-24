@@ -14,6 +14,9 @@ declare module 'hono' {
       GOOGLE_AUTH_CLIENT_ID: string
       GOOGLE_AUTH_CLIENT_SECRET: string
     }
+    Variables: {
+      currentUser: User
+    }
   }
   interface ContextRenderer {
     (

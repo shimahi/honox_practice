@@ -89,7 +89,7 @@ export default createRoute(async (c) => {
             <p>id: {u.id}</p>
             <p>accountId: {u.accountId}</p>
             <p>
-              name: <b>{u.name}</b>
+              name: <b>{u.displayName}</b>
             </p>
           </div>
         ))}

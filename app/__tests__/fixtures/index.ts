@@ -15,6 +15,7 @@ export const userFixture = Factory.define<User>(() => {
   return {
     id: createId(),
     accountId: faker.word.noun({ length: { min: 5, max: 12 } }),
-    name: faker.person.firstName(),
+    displayName: faker.person.firstName(),
+    googleProfileId: faker.string.uuid(),
   }
 })

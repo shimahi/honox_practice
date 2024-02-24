@@ -19,5 +19,6 @@ export const ContextMock: Context = {
 export const userDomainMock = {
   repository: {
     getUsers: jest.fn(),
+    getUserByGoogleProfileId: jest.fn(),
   },
 }
