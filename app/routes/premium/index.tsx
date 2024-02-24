@@ -8,7 +8,7 @@ export default createRoute(
     if (bool) return c.render(<h1>残念ながら。。。</h1>)
     await next()
   },
-  c => {
+  (c) => {
     return c.render(<h1>Hello!</h1>)
   },
 )
