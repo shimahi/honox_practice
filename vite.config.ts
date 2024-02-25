@@ -14,7 +14,20 @@ export default defineConfig(({ mode }) => {
     },
     // ESMでは動かないパッケージを記述し、バックエンドでのみ実行するように設定
     ssr: {
-      external: ['@paralleldrive/cuid2', 'google-auth-library'],
+      external: [
+        '@paralleldrive/cuid2',
+        'google-auth-library',
+        'node:google-auth-library',
+      ],
+    },
+    build: {
+      rollupOptions: {
+        external: [
+          '@paralleldrive/cuid2',
+          'google-auth-library',
+          'node:google-auth-library',
+        ],
+      },
     },
   }
 
@@ -23,6 +36,7 @@ export default defineConfig(({ mode }) => {
       ...common,
       build: {
         rollupOptions: {
+          ...common.build?.rollupOptions,
           input: ['/app/style.css'],
           output: {
             assetFileNames: 'static/[name].[ext]',
