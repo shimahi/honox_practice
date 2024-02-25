@@ -23,10 +23,10 @@
     "formatter": {
       "enabled": true,
       "quoteStyle": "single",
-      "jsxQuoteStyle": "single",
+      "jsxQuoteStyle": "double",
       "trailingComma": "all",
       "semicolons": "asNeeded",
-      "arrowParentheses": "asNeeded",
+      "arrowParentheses": "always",
       "indentStyle": "space",
       "lineWidth": 80,
       "quoteProperties": "asNeeded"

@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
         { find: '@', replacement: '/app' },
       ],
     },
+    // ESMでは動かないパッケージを記述し、バックエンドでのみ実行するように設定
+    ssr: {
+      external: ['@paralleldrive/cuid2'],
+    },
   }
 
   if (mode === 'client') {
@@ -19,6 +23,7 @@ export default defineConfig(({ mode }) => {
       ...common,
       build: {
         rollupOptions: {
+          ...common.build?.rollupOptions,
           input: ['/app/style.css'],
           output: {
             assetFileNames: 'static/[name].[ext]',

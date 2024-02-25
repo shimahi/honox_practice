@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "// git clone したら最初にやる": "",
-    "setup": "$npm_execpath install && $npm_execpath run seed:dev && cp .env.example .env && cp wrangler.toml.example wrangler.toml",
+    "setup": "$npm_execpath install && $npm_execpath run seed:dev && cp -n .env.example .env && cp -n wrangler.toml.example wrangler.toml",
     "// ローカルサーバーの起動": "",
     "dev": "vite",
     "// アプリのビルド": "",
@@ -26,14 +26,15 @@
   },
   "private": true,
   "dependencies": {
+    "@hono/oauth-providers": "^0.3.1",
     "@paralleldrive/cuid2": "^2.2.2",
-    "drizzle-orm": "^0.29.3",
-    "hono": "^4.0.5",
-    "honox": "^0.1.4"
+    "drizzle-orm": "^0.29.4",
+    "hono": "^4.0.6",
+    "honox": "^0.1.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "@cloudflare/workers-types": "^4.20240208.0",
+    "@cloudflare/workers-types": "^4.20240222.0",
     "@faker-js/faker": "^8.4.1",
     "@hono/vite-cloudflare-pages": "^0.2.3",
     "better-sqlite3": "^9.4.3",

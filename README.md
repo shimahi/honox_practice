@@ -65,9 +65,10 @@ $ bun dev
   - **domains/** ドメインロジックを記述する
   - **islands/** フロントエンド側でインタラクションを行うコンポーネントはここに記述する
     ここ以外でクライアントサイドのロジックは動かないので注意
+  - **middlewares/** ミドルウェアを記述する
+  - **repositories/** データベースを扱う処理
   - **routes/** ページコンポーネントの記述ファイル File Based Routing に基づいてテンプレートを作成する
     - \_renderer.tsx ページコンポーネントのレンダリングを行う。Hono の [JSX Renderer Middleware](https://hono.dev/middleware/builtin/jsx-renderer) が呼ばれるファイル
-  - **repositories/** データベースを扱う処理
   - **services/** 外部サービスを扱うためのモジュールに関する処理
   - **utils/** ドメインに依存しないユーティリティロジックを記載する
   - **validators/** 入力バリデーションを定義する

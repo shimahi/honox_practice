@@ -8,10 +8,10 @@ import type { Context } from '@/global'
  */
 
 //Domainクラスおよびそのメンバのコンストラクタ引数に渡すコンテキスト
-export const ContextMock: Context = {
+export const contextMock: Context = {
   env: {
-    DB: undefined as unknown,
-    NAME: undefined as unknown,
+    DB: jest.fn()(),
+    NAME: jest.fn()(),
   },
 } as Context
 
@@ -19,5 +19,6 @@ export const ContextMock: Context = {
 export const userDomainMock = {
   repository: {
     getUsers: jest.fn(),
+    getUserByGoogleProfileId: jest.fn(),
   },
 }

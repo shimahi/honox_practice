@@ -8,5 +8,7 @@ export const users = sqliteTable('users', {
   /** ユーザーの表示用アカウントID、ユニークな半角英数 */
   accountId: text('accountId').notNull(),
   /** ユーザー名 */
-  name: text('name').notNull(),
+  displayName: text('displayName').notNull(),
+  /** Google認証のOAuthプロファイルID */
+  googleProfileId: text('googleProfileId'),
 })
