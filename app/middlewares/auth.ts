@@ -7,8 +7,6 @@ import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
-const GOOGLE_AUTH_TOKEN = 'googleAuthToken'
-
 export const authMiddlewares = {
   /**
    * cookieから認証状態を確認し、コンテキストにユーザー情報をセットする
@@ -41,7 +39,7 @@ export const authMiddlewares = {
     }
 
     const userDomain = new UserDomain(c)
-    const user = userDomain.getUserByProfileId(profileIds)
+    const user = await userDomain.getUserByProfileId(profileIds)
 
     if (!user) {
       throw new HTTPException(401, { message: 'Unauthorized' })
@@ -54,7 +52,7 @@ export const authMiddlewares = {
    * 認証情報を削除する
    */
   signOut(c: Context, next: Next) {
-    deleteCookie(c, GOOGLE_AUTH_TOKEN)
+    deleteCookie(c, 'googleAuthToken')
     next()
   },
 
@@ -83,7 +81,7 @@ export const authMiddlewares = {
       throw new HTTPException(401, { message: 'Unauthorized' })
     }
     // cookieにアクセストークンをセットする
-    setCookie(c, GOOGLE_AUTH_TOKEN, token.token, {
+    setCookie(c, 'googleAuthToken', token.token, {
       httpOnly: true,
       sameSite: 'Lax',
       secure: true,
@@ -114,17 +112,17 @@ async function getProfileIds(c: Context) {
  * cookieのアクセストークンからGoogle認証情報を取得する
  */
 async function getGoogleTokenInfo(c: Context) {
-  const token = getCookie(c, GOOGLE_AUTH_TOKEN)
+  const token = getCookie(c, 'googleAuthToken')
 
   if (!token) {
     return null
   }
 
-  console.log({ token })
-
   const authClient = new GoogleAuthClient()
   return await authClient.getTokenInfo(token).catch((e) => {
-    console.error(e)
+    // アクセストークンが無効な場合にcookieを削除する
+    deleteCookie(c, 'googleAuthToken')
+
     return null
   })
 }

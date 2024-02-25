@@ -13,10 +13,12 @@
     "jsxImportSource": "hono/jsx",
     "noEmit": true,
     "baseUrl": ".",
+    "isolatedModules": true,
     "paths": {
       "@/schemas": ["db/schemas/index.ts"],
       "@/schemas/*": ["db/schemas/*"],
-      "@/*": ["app/*"]
+      "@/*": ["app/*"],
+      "hono/cookie": ["app/global.d.ts"]
     }
   }
 }

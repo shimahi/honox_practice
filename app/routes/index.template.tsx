@@ -1,16 +1,16 @@
-import { UserDomain } from '@/domains/user'
 import Counter from '@/islands/counter'
-import { authMiddlewares } from '@/middlewares/auth'
-import { env } from 'hono/adapter'
+import type { User } from '@/schemas'
 import { css } from 'hono/css'
-import { createRoute } from 'honox/factory'
+import { ErrorBoundary } from 'hono/jsx'
 
-export default createRoute(authMiddlewares.authorize, async (c) => {
-  const userDomain = new UserDomain(c)
-  const users = await userDomain.getUsers()
-  const currentUser = c.get('currentUser')
+type Props = {
+  currentUser: User | null
+  users: User[] | null
+  name: string
+}
 
-  return c.render(
+export const Template = ({ currentUser, users, name }: Props) => {
+  return (
     <div>
       <h2
         class={css`
@@ -22,6 +22,7 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
       >
         User list
       </h2>
+
       <div>あなたはいまログインしていま{currentUser ? 'す' : 'せん'}</div>
       <div>{!!currentUser && currentUser?.displayName}</div>
 
@@ -46,7 +47,7 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
       >
         <Counter />
       </div>
-      <div>環境変数NAME: {env(c).NAME} </div>
+      <div>環境変数NAME: {name} </div>
       <div
         class={css`
           margin-top: 20px;
@@ -60,6 +61,19 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
           <img src="/static/images/ssl.jpg" alt="Steller Sea Lion" />
         </div>
       </div>
+      <div
+        class={css`
+          padding: 20px 10px;
+          border: solid 1px #8db;
+        `}
+      >
+        <ErrorBoundary
+          fallback={<div>このErrorBoundaryの中でエラーを投げています</div>}
+        >
+          <ErrorTemplate />
+        </ErrorBoundary>
+      </div>
+
       <div>
         {users?.map((u) => (
           <div
@@ -82,9 +96,10 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
           </div>
         ))}
       </div>
-    </div>,
-    {
-      title: 'Hono Blog',
-    },
+    </div>
   )
-})
+}
+
+const ErrorTemplate = () => {
+  throw new Error('うん')
+}

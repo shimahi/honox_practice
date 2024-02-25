@@ -14,8 +14,8 @@ export default jsxRenderer(({ children, title }) => {
         ) : (
           <link href="/app/style.css" rel="stylesheet" />
         )}
-        <Style />
         <Script src="/app/client.ts" />
+        <Style />
       </head>
       <body>
         <div
