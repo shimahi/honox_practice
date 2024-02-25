@@ -88,9 +88,10 @@ export const authMiddlewares = {
     })
     // ユーザー情報をDB登録する。登録済みの場合はスキップ。
     const userDomain = new UserDomain(c)
+
     await userDomain.createUser({
       googleProfileId: googleUser?.id,
-      accountId: `${googleUser?.email?.split('@')[0].replace(/./g, '')}`,
+      accountId: `${googleUser?.email?.split('@')[0].replace(/\./g, '')}`,
       displayName: googleUser?.name ?? 'anonymous',
     })
 
@@ -112,7 +113,6 @@ async function getProfileIds(c: Context) {
  */
 async function getGoogleProfile(c: Context) {
   const token = getCookie(c, 'googleAuthToken')
-
   if (!token) {
     return null
   }
@@ -124,8 +124,9 @@ async function getGoogleProfile(c: Context) {
 }
 
 /**
- * アクセストークンからGoogleの認証情報を取得する
+ * Googleの認証情報を取得する
  * https://cloud.google.com/docs/authentication/token-types?hl=ja#access-contents
+ * @param {string} accessToken cookieに保存しているGoogleのアクセストークン
  */
 async function getTokenInfo(accessToken: string | undefined): Promise<{
   aud: string
