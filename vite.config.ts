@@ -16,11 +16,6 @@ export default defineConfig(({ mode }) => {
     ssr: {
       external: ['@paralleldrive/cuid2', 'google-auth-library'],
     },
-    build: {
-      rollupOptions: {
-        external: ['google-auth-library', '@paralleldrive/cuid2'],
-      },
-    },
   }
 
   if (mode === 'client') {
@@ -28,7 +23,6 @@ export default defineConfig(({ mode }) => {
       ...common,
       build: {
         rollupOptions: {
-          ...common.build?.rollupOptions,
           input: ['/app/style.css'],
           output: {
             assetFileNames: 'static/[name].[ext]',
