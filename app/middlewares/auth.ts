@@ -125,7 +125,7 @@ async function getGoogleProfile(c: Context) {
 
 /**
  * アクセストークンからGoogleの認証情報を取得する
- * https://googleapis.dev/nodejs/google-auth-library/latest/interfaces/TokenInfo.html
+ * https://cloud.google.com/docs/authentication/token-types?hl=ja#access-contents
  */
 async function getTokenInfo(accessToken: string | undefined): Promise<{
   aud: string
