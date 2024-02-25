@@ -1,8 +1,7 @@
-// @ts-ignore
-import { OAuth2Client as GoogleAuthClient } from 'node:google-auth-library'
 import { UserDomain } from '@/domains/user'
 import type { Context } from '@/global'
 import { googleAuth } from '@hono/oauth-providers/google'
+import { OAuth2Client as GoogleAuthClient } from 'google-auth-library'
 import type { Next } from 'hono'
 import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'

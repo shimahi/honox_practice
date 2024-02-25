@@ -23,9 +23,14 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         external: [
-          '@paralleldrive/cuid2',
-          'google-auth-library',
-          'node:google-auth-library',
+          'node:util',
+          'node:buffer',
+          'node:stream',
+          'node:net',
+          'node:url',
+          'node:fs',
+          'node:path',
+          'perf_hooks',
         ],
       },
     },
