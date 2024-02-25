@@ -1,13 +1,32 @@
 import { RepositoryBase } from '@/repositories/_repositoryBase'
 import { users } from '@/schemas'
+import { createId } from '@paralleldrive/cuid2'
 import { type InferInsertModel, eq } from 'drizzle-orm'
 export class UserRepository extends RepositoryBase {
   /**
-   * すべてのユーザーを取得する
+   * ユーザーを作成する
    */
-  private createUser(input: InferInsertModel<typeof users>) {
-    return this.drizzle.insert(users).values(input).returning().get()
+  async createUser(input: InferInsertModel<typeof users>) {
+    return await this.drizzle
+      .insert(users)
+      .values(input)
+      .returning()
+      .get()
+      .catch(async (e) => {
+        console.log({ e })
+
+        // accountIdが重複している場合はaccountIdにランダムな文字列を付与して再度登録する
+        return await this.drizzle
+          .insert(users)
+          .values({
+            ...input,
+            accountId: `${input.accountId}${createId().slice(4)}`,
+          })
+          .returning()
+          .get()
+      })
   }
+
   /**
    * すべてのユーザーを取得する
    */
@@ -17,6 +36,9 @@ export class UserRepository extends RepositoryBase {
 
   /**
    * GoogleプロファイルIDからユーザーを取得する
+   * NOTE:
+   * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
+   * https://github.com/drizzle-team/drizzle-orm/issues/777
    */
   async getUserByGoogleProfileId(googleProfileId: string) {
     return (
@@ -26,30 +48,4 @@ export class UserRepository extends RepositoryBase {
         .where(eq(users.googleProfileId, googleProfileId))
     )?.[0]
   }
-
-  // // profileの情報からユーザーを新規作成する。すでに存在する場合はそのユーザーを返す。
-  // async findOrCreateUser(profile: {
-  //   provider: string
-  //   id: string
-  //   displayName: string
-  //   photos: { value: string }[]
-  // }) {
-  //   const existing = await this.getUserByProfileId(profile.id)
-  //   if (existing) return existing
-
-  //   const user = await this.createUser({
-  //     id: createId(),
-  //     profileId: profile.id,
-  //     accountId: generateString(),
-  //     displayName: profile.displayName,
-  //     avatarUri: profile.photos?.[0].value,
-  //     provider: profile.provider,
-  //     createdAt: new Date(),
-  //   })
-
-  //   return {
-  //     provider: user.provider,
-  //     profileId: user.profileId,
-  //   }
-  // }
 }

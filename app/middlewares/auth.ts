@@ -4,7 +4,7 @@ import { googleAuth } from '@hono/oauth-providers/google'
 import { OAuth2Client as GoogleAuthClient } from 'google-auth-library'
 import type { Next } from 'hono'
 import { env } from 'hono/adapter'
-import { getCookie, setCookie } from 'hono/cookie'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 const GOOGLE_AUTH_TOKEN = 'googleAuthToken'
@@ -17,17 +17,17 @@ export const authMiddlewares = {
     const profileIds = await getProfileIds(c)
 
     if (!Object.keys(profileIds).length) {
-      await next()
+      return next()
     }
 
     const userDomain = new UserDomain(c)
-    const user = userDomain.getUserByProfileId(profileIds)
+    const user = await userDomain.getUserByProfileId(profileIds)
 
     if (!user) {
-      await next()
+      return next()
     }
     c.set('currentUser', user)
-    await next()
+    return next()
   },
   /**
    * authorizeと同じ処理だが、
@@ -49,6 +49,14 @@ export const authMiddlewares = {
     c.set('currentUser', user)
     await next()
   },
+  /**
+   *
+   * 認証情報を削除する
+   */
+  signOut(c: Context, next: Next) {
+    deleteCookie(c, GOOGLE_AUTH_TOKEN)
+    next()
+  },
 
   /**
    * Google認証を行い、成功したらアクセストークンをコンテキストにセットする
@@ -68,27 +76,33 @@ export const authMiddlewares = {
    * また、新規ユーザーの場合はユーザー情報をDB登録する
    */
   async afterSignInWithGoogle(c: Context, next: Next) {
-    const token = c.get('token')?.token
+    const token = c.get('token')
+    const googleUser = c.get('user-google')
 
     if (!token) {
-      return c.redirect('/')
+      throw new HTTPException(401, { message: 'Unauthorized' })
     }
-
-    setCookie(c, GOOGLE_AUTH_TOKEN, token, {
+    // cookieにアクセストークンをセットする
+    setCookie(c, GOOGLE_AUTH_TOKEN, token.token, {
       httpOnly: true,
       sameSite: 'Lax',
       secure: true,
       path: '/',
     })
-
-    // TODO: 初めてのGoogle認証の場合はユーザー情報をDB登録する
+    // ユーザー情報をDB登録する。登録済みの場合はスキップ。
+    const userDomain = new UserDomain(c)
+    await userDomain.createUser({
+      googleProfileId: googleUser?.id,
+      accountId: `${googleUser?.email?.split('@')[0].replace(/./g, '')}`,
+      displayName: googleUser?.name ?? 'anonymous',
+    })
 
     return await next()
   },
 }
 
 /**
- * アクセストークンから認証プロバイだーのプロファイルIDを取得する
+ * アクセストークンから認証プロバイダーのプロファイルIDを取得する
  */
 async function getProfileIds(c: Context) {
   const googleProfileId = (await getGoogleTokenInfo(c))?.sub
@@ -106,6 +120,11 @@ async function getGoogleTokenInfo(c: Context) {
     return null
   }
 
+  console.log({ token })
+
   const authClient = new GoogleAuthClient()
-  return await authClient.getTokenInfo(token)
+  return await authClient.getTokenInfo(token).catch((e) => {
+    console.error(e)
+    return null
+  })
 }

@@ -1,30 +1,14 @@
 import { UserDomain } from '@/domains/user'
 import Counter from '@/islands/counter'
-import { OAuth2Client } from 'google-auth-library'
-import { Hono } from 'hono'
+import { authMiddlewares } from '@/middlewares/auth'
 import { env } from 'hono/adapter'
-import { getCookie } from 'hono/cookie'
 import { css } from 'hono/css'
 import { createRoute } from 'honox/factory'
 
-const app = new Hono()
-
-app.get('/auth/google', (c) => {
-  return c.render(<h1>Google Auth</h1>)
-})
-
-export default createRoute(async (c) => {
+export default createRoute(authMiddlewares.authorize, async (c) => {
   const userDomain = new UserDomain(c)
   const users = await userDomain.getUsers()
-
-  const token = getCookie(c, 'googleAuthToken')
-
-  if (token) {
-    const authClient = new OAuth2Client()
-    const tokenInfo = await authClient.getTokenInfo(token)
-
-    console.log({ tokenInfo })
-  }
+  const currentUser = c.get('currentUser')
 
   return c.render(
     <div>
@@ -38,6 +22,22 @@ export default createRoute(async (c) => {
       >
         User list
       </h2>
+      <div>あなたはいまログインしていま{currentUser ? 'す' : 'せん'}</div>
+      <div>{!!currentUser && currentUser?.displayName}</div>
+
+      <div
+        class={css`
+          margin-top: 20px;
+          margin-bottom: 20px;
+        `}
+      >
+        {currentUser ? (
+          <a href="/auth/logout">ログアウト</a>
+        ) : (
+          <a href="/auth/google">Googleでログイン</a>
+        )}
+      </div>
+
       <div
         class={css`
           display: flex;
@@ -45,8 +45,8 @@ export default createRoute(async (c) => {
         `}
       >
         <Counter />
-        <h3>env name: {env(c).NAME} </h3>
       </div>
+      <div>環境変数NAME: {env(c).NAME} </div>
       <div
         class={css`
           margin-top: 20px;
@@ -59,30 +59,18 @@ export default createRoute(async (c) => {
         <div>
           <img src="/static/images/ssl.jpg" alt="Steller Sea Lion" />
         </div>
-        <div>
-          <img src="/static/images/ssl2.jpg" alt="Steller Sea Lion" />
-        </div>
-        <div>
-          <img src="/static/images/ssl3.jpg" alt="Steller Sea Lion" />
-        </div>
-      </div>
-      <div
-        class={css`
-          margin-top: 20px;
-          margin-bottom: 20px;
-        `}
-      >
-        <a href="/auth/google">Googleでログイン</a>
       </div>
       <div>
         {users?.map((u) => (
           <div
             class={css`
-              background-color: #f9f9f9;
               padding: 15px;
               border-radius: 5px;
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
               margin-bottom: 20px;
+              background-color: ${
+                currentUser?.id === u.id ? '#f9e9d9' : '#faf8fa'
+              };
             `}
             key={u.id}
           >
