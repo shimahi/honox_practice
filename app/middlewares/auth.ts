@@ -1,7 +1,6 @@
 import { UserDomain } from '@/domains/user'
 import type { Context } from '@/global'
 import { googleAuth } from '@hono/oauth-providers/google'
-import { OAuth2Client as GoogleAuthClient } from 'google-auth-library'
 import type { Next } from 'hono'
 import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
@@ -100,10 +99,10 @@ export const authMiddlewares = {
 }
 
 /**
- * アクセストークンから認証プロバイダーのプロファイルIDを取得する
+ * 認証プロバイダーのプロファイルIDを取得する
  */
 async function getProfileIds(c: Context) {
-  const googleProfileId = (await getGoogleTokenInfo(c))?.sub
+  const googleProfileId = (await getGoogleProfile(c))?.sub
 
   return { googleProfileId }
 }
@@ -111,18 +110,35 @@ async function getProfileIds(c: Context) {
 /**
  * cookieのアクセストークンからGoogle認証情報を取得する
  */
-async function getGoogleTokenInfo(c: Context) {
+async function getGoogleProfile(c: Context) {
   const token = getCookie(c, 'googleAuthToken')
 
   if (!token) {
     return null
   }
 
-  const authClient = new GoogleAuthClient()
-  return await authClient.getTokenInfo(token).catch(() => {
-    // アクセストークンが無効な場合にcookieを削除する
+  return await getTokenInfo(token).catch((e) => {
     deleteCookie(c, 'googleAuthToken')
-
     return null
   })
+}
+
+/**
+ * アクセストークンからGoogleの認証情報を取得する
+ * https://googleapis.dev/nodejs/google-auth-library/latest/interfaces/TokenInfo.html
+ */
+async function getTokenInfo(accessToken: string | undefined): Promise<{
+  aud: string
+  user_id?: string
+  scopes: string[]
+  expiry_date: number
+  sub?: string
+  azp?: string
+  access_type?: string
+  email?: string
+  email_verified?: boolean
+}> {
+  return await fetch(
+    `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`,
+  ).then((res) => res.json())
 }

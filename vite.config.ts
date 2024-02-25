@@ -14,12 +14,7 @@ export default defineConfig(({ mode }) => {
     },
     // ESMでは動かないパッケージを記述し、バックエンドでのみ実行するように設定
     ssr: {
-      external: ['@paralleldrive/cuid2', 'google-auth-library'],
-    },
-    build: {
-      rollupOptions: {
-        external: ['stripe'],
-      },
+      external: ['@paralleldrive/cuid2'],
     },
   }
 
