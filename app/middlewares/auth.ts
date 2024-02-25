@@ -1,7 +1,8 @@
+// @ts-ignore
+import { OAuth2Client as GoogleAuthClient } from 'node:google-auth-library'
 import { UserDomain } from '@/domains/user'
 import type { Context } from '@/global'
 import { googleAuth } from '@hono/oauth-providers/google'
-import { OAuth2Client as GoogleAuthClient } from 'google-auth-library'
 import type { Next } from 'hono'
 import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
@@ -119,7 +120,7 @@ async function getGoogleTokenInfo(c: Context) {
   }
 
   const authClient = new GoogleAuthClient()
-  return await authClient.getTokenInfo(token).catch((e) => {
+  return await authClient.getTokenInfo(token).catch(() => {
     // アクセストークンが無効な場合にcookieを削除する
     deleteCookie(c, 'googleAuthToken')
 
