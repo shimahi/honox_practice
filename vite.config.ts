@@ -32,6 +32,17 @@ export default defineConfig(({ mode }) => {
           'node:path',
           'perf_hooks',
         ],
+        output: {
+          globals: {
+            'node:stream': 'stream',
+            'node:buffer': 'buffer',
+            'node:util': 'util',
+            'node:net': 'net',
+            'node:url': 'url',
+            perf_hooks: 'perf_hooks',
+          },
+          inlineDynamicImports: true,
+        },
       },
     },
   }
