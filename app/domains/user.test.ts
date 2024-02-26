@@ -32,22 +32,29 @@ describe('#getUserByProfileId', () => {
     userDomainMock.repository.getUserByGoogleProfileId.mockClear()
   })
 
-  test('repository.getUserByGoogleProfileIdがコールされること', async () => {
+  describe('profileIdキーにgoogleを指定した場合', () => {
     const subject = new UserDomain(contextMock)
     const googleProfileId = faker.string.uuid()
-    await subject.getUserByProfileId({ googleProfileId })
+    test('repository.getUserByGoogleProfileIdがコールされること', async () => {
+      await subject.getUserByProfileIds({ googleProfileId })
 
-    expect(
-      userDomainMock.repository.getUserByGoogleProfileId,
-    ).toHaveBeenCalledWith(googleProfileId)
+      expect(
+        userDomainMock.repository.getUserByGoogleProfileId,
+      ).toHaveBeenCalledWith(googleProfileId)
+    })
   })
 
-  test('repository.getUserByGoogleProfileIdはコールされないこと', async () => {
+  describe('profileIdキーにgoogleを指定しない場合', () => {
     const subject = new UserDomain(contextMock)
-    await subject.getUserByProfileId({})
+    const otherProfileId = faker.string.uuid()
+    test('repository.getUserByGoogleProfileIdはコールされないこと', async () => {
+      await subject.getUserByProfileIds({
+        otherProfileId,
+      } as unknown as Parameters<UserDomain['getUserByProfileIds']>[0])
 
-    expect(
-      userDomainMock.repository.getUserByGoogleProfileId,
-    ).not.toHaveBeenCalled()
+      expect(
+        userDomainMock.repository.getUserByGoogleProfileId,
+      ).not.toHaveBeenCalled()
+    })
   })
 })

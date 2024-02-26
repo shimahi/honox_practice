@@ -1,5 +1,6 @@
 import { UserDomain } from '@/domains/user'
 import type { Context } from '@/global'
+
 import { googleAuth } from '@hono/oauth-providers/google'
 import type { Next } from 'hono'
 import { env } from 'hono/adapter'
@@ -12,17 +13,8 @@ export const authMiddlewares = {
    */
   async authorize(c: Context, next: Next) {
     const profileIds = await getProfileIds(c)
-
-    if (!Object.keys(profileIds).length) {
-      return next()
-    }
-
     const userDomain = new UserDomain(c)
-    const user = await userDomain.getUserByProfileId(profileIds)
-
-    if (!user) {
-      return next()
-    }
+    const user = await userDomain.getUserByProfileIds(profileIds)
     c.set('currentUser', user)
     return next()
   },
@@ -32,17 +24,12 @@ export const authMiddlewares = {
    */
   async authorizeWithError(c: Context, next: Next) {
     const profileIds = await getProfileIds(c)
-
-    if (!Object.keys(profileIds).length) {
-      throw new HTTPException(401, { message: 'Unauthorized' })
-    }
-
     const userDomain = new UserDomain(c)
-    const user = await userDomain.getUserByProfileId(profileIds)
-
+    const user = await userDomain.getUserByProfileIds(profileIds)
     if (!user) {
       throw new HTTPException(401, { message: 'Unauthorized' })
     }
+
     c.set('currentUser', user)
     await next()
   },
@@ -59,13 +46,12 @@ export const authMiddlewares = {
    * Google認証を行い、成功したらアクセストークンをコンテキストにセットする
    * https://github.com/honojs/middleware/blob/main/packages/oauth-providers/src/providers/google/googleAuth.ts
    */
-  async signInWithGoogle(c: Context, next: Next) {
-    const handler = googleAuth({
+  signInWithGoogle(c: Context, next: Next) {
+    return googleAuth({
       client_id: env(c).GOOGLE_AUTH_CLIENT_ID,
       client_secret: env(c).GOOGLE_AUTH_CLIENT_SECRET,
       scope: ['openid', 'email', 'profile'],
-    })
-    return await handler(c, next)
+    })(c, next)
   },
   /**
    * Google認証後に呼び出す処理
@@ -76,7 +62,7 @@ export const authMiddlewares = {
     const token = c.get('token')
     const googleUser = c.get('user-google')
 
-    if (!token) {
+    if (!(token && googleUser)) {
       throw new HTTPException(401, { message: 'Unauthorized' })
     }
     // cookieにアクセストークンをセットする
@@ -88,14 +74,15 @@ export const authMiddlewares = {
     })
     // ユーザー情報をDB登録する。登録済みの場合はスキップ。
     const userDomain = new UserDomain(c)
+    await userDomain.createUser(
+      { googleProfileId: googleUser.id ?? null },
+      {
+        accountId: `${googleUser.email?.split('@')[0].replace(/\./g, '')}`,
+        displayName: googleUser.name ?? 'anonymous',
+      },
+    )
 
-    await userDomain.createUser({
-      googleProfileId: googleUser?.id,
-      accountId: `${googleUser?.email?.split('@')[0].replace(/\./g, '')}`,
-      displayName: googleUser?.name ?? 'anonymous',
-    })
-
-    return await next()
+    return next()
   },
 }
 
@@ -103,43 +90,27 @@ export const authMiddlewares = {
  * 認証プロバイダーのプロファイルIDを取得する
  */
 async function getProfileIds(c: Context) {
-  const googleProfileId = (await getGoogleProfile(c))?.sub
+  const googleProfileId = (await getGoogleProfile(c))?.sub ?? null
 
-  return { googleProfileId }
+  return { googleProfileId } as const
 }
 
 /**
  * cookieのアクセストークンからGoogle認証情報を取得する
+ * https://cloud.google.com/docs/authentication/token-types?hl=ja#access-contents
  */
-async function getGoogleProfile(c: Context) {
-  const token = getCookie(c, 'googleAuthToken')
-  if (!token) {
+function getGoogleProfile(c: Context) {
+  const accessToken = getCookie(c, 'googleAuthToken')
+  if (!accessToken) {
     return null
   }
 
-  return await getTokenInfo(token).catch((e) => {
-    deleteCookie(c, 'googleAuthToken')
-    return null
-  })
-}
-
-/**
- * Googleの認証情報を取得する
- * https://cloud.google.com/docs/authentication/token-types?hl=ja#access-contents
- * @param {string} accessToken cookieに保存しているGoogleのアクセストークン
- */
-async function getTokenInfo(accessToken: string | undefined): Promise<{
-  aud: string
-  user_id?: string
-  scopes: string[]
-  expiry_date: number
-  sub?: string
-  azp?: string
-  access_type?: string
-  email?: string
-  email_verified?: boolean
-}> {
-  return await fetch(
+  return fetch(
     `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`,
-  ).then((res) => res.json())
+  )
+    .then((res) => res.json() as Promise<{ sub?: string }>)
+    .catch((e) => {
+      deleteCookie(c, 'googleAuthToken')
+      return null
+    })
 }
