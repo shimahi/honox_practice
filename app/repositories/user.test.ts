@@ -51,6 +51,33 @@ afterAll(() => {
  * テストケースの実装
  * =============================
  */
+
+describe('#createUser', () => {
+  const subject = new UserRepository(contextMock.env.DB)
+  const userData = userFixture.build()
+  describe('入力パラメータが正常な場合', () => {
+    test('ユーザーレコードが作成されること', async () => {
+      const result = await subject.createUser(userData)
+
+      expect(result).toEqual(userData)
+    })
+  })
+  describe('accountIdが重複している場合', () => {
+    const userData1 = userFixture.build()
+    const userData2 = userFixture.build({
+      accountId: userData1.accountId,
+    })
+
+    beforeEach(async () => {
+      await db.insert(users).values(userData1).run()
+    })
+
+    test('エラーが投げられること', async () => {
+      expect(() => subject.createUser(userData2)).toThrow()
+    })
+  })
+})
+
 describe('#getUsers', () => {
   const subject = new UserRepository(contextMock.env.DB)
 
@@ -58,7 +85,6 @@ describe('#getUsers', () => {
   const userData2 = userFixture.build()
 
   beforeEach(async () => {
-    console.log('getUsersのテストが呼ばれた')
     await db.insert(users).values(userData1).run()
     await db.insert(users).values(userData2).run()
   })

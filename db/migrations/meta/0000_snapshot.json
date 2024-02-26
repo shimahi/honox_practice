@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "fa83d85e-050e-4765-b1f6-ab0019ee59fd",
+  "id": "e2090b39-309b-4ed4-a30d-82fb3c7687d7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -21,15 +21,33 @@
           "notNull": true,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
+        "displayName": {
+          "name": "displayName",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "googleProfileId": {
+          "name": "googleProfileId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "users_id_unique": {
+          "name": "users_id_unique",
+          "columns": ["id"],
+          "isUnique": true
+        },
+        "users_accountId_unique": {
+          "name": "users_accountId_unique",
+          "columns": ["accountId"],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}

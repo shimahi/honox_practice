@@ -18,6 +18,7 @@ export const contextMock: Context = {
 // UserDomainクラスのインスタンスのモック
 export const userDomainMock = {
   repository: {
+    createUser: jest.fn(),
     getUsers: jest.fn(),
     getUserByGoogleProfileId: jest.fn(),
   },

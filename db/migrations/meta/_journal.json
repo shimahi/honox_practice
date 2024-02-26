@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1707937301641,
-      "tag": "0000_ordinary_stellaris",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1708799450344,
-      "tag": "0001_futuristic_liz_osborn",
+      "when": 1708932948858,
+      "tag": "0000_slimy_jack_flag",
       "breakpoints": true
     }
   ]

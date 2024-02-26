@@ -4,9 +4,12 @@ import { type InferInsertModel, eq } from 'drizzle-orm'
 export class UserRepository extends RepositoryBase {
   /**
    * ユーザーを作成する
+   * NOTE:
+   * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
+   * https://github.com/drizzle-team/drizzle-orm/issues/777
    */
-  createUser(input: InferInsertModel<typeof users>) {
-    return this.drizzle.insert(users).values(input).returning().get()
+  async createUser(input: InferInsertModel<typeof users>) {
+    return (await this.drizzle.insert(users).values(input).returning())[0]
   }
 
   /**

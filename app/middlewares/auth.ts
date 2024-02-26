@@ -90,7 +90,7 @@ export const authMiddlewares = {
  * 認証プロバイダーのプロファイルIDを取得する
  */
 async function getProfileIds(c: Context) {
-  const googleProfileId = (await getGoogleProfile(c))?.sub ?? null
+  const googleProfileId = await getGoogleProfileId(c)
 
   return { googleProfileId } as const
 }
@@ -99,7 +99,7 @@ async function getProfileIds(c: Context) {
  * cookieのアクセストークンからGoogle認証情報を取得する
  * https://cloud.google.com/docs/authentication/token-types?hl=ja#access-contents
  */
-function getGoogleProfile(c: Context) {
+function getGoogleProfileId(c: Context) {
   const accessToken = getCookie(c, 'googleAuthToken')
   if (!accessToken) {
     return null
@@ -109,6 +109,7 @@ function getGoogleProfile(c: Context) {
     `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`,
   )
     .then((res) => res.json() as Promise<{ sub?: string }>)
+    .then(({ sub }) => sub ?? null)
     .catch((e) => {
       deleteCookie(c, 'googleAuthToken')
       return null
