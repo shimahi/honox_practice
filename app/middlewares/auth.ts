@@ -46,12 +46,14 @@ export const authMiddlewares = {
    * Google認証を行い、成功したらアクセストークンをコンテキストにセットする
    * https://github.com/honojs/middleware/blob/main/packages/oauth-providers/src/providers/google/googleAuth.ts
    */
-  signInWithGoogle(c: Context, next: Next) {
-    return googleAuth({
+  async signInWithGoogle(c: Context, next: Next) {
+    const handler = await googleAuth({
       client_id: env(c).GOOGLE_AUTH_CLIENT_ID,
       client_secret: env(c).GOOGLE_AUTH_CLIENT_SECRET,
       scope: ['openid', 'email', 'profile'],
-    })(c, next)
+    })
+
+    return handler(c, next)
   },
   /**
    * Google認証後に呼び出す処理

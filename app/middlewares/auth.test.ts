@@ -35,10 +35,19 @@ const cookieMock = {
 }
 mock.module('hono/cookie', () => cookieMock)
 
+const googleAuthMock = { googleAuth: jest.fn() }
+mock.module('@hono/oauth-providers/google', () => googleAuthMock)
+
 afterAll(() => {
   mock.restore()
   jest.restoreAllMocks()
 })
+
+/**
+ * =============================
+ * テストケースの実装
+ * =============================
+ */
 
 describe('#authorize', () => {
   describe('Cookieにアクセストークンが含まれ、該当するユーザーがDBに含まれる場合', () => {
@@ -90,6 +99,22 @@ describe('#signOut', () => {
       contextMock,
       'googleAuthToken',
     )
+  })
+})
+
+describe('#signInWithGoogle', () => {
+  const googleSignedMiddleware = jest.fn()
+  beforeEach(() => {
+    googleAuthMock.googleAuth.mockResolvedValue(googleSignedMiddleware)
+  })
+  test('環境変数を引数にGoogle認証のミドルウェアが呼び出されること', async () => {
+    await authMiddlewares.signInWithGoogle(contextMock, nextMock)
+    expect(googleAuthMock.googleAuth).toHaveBeenCalledWith({
+      client_id: expect.any(String),
+      client_secret: expect.any(String),
+      scope: ['openid', 'email', 'profile'],
+    })
+    expect(googleSignedMiddleware).toHaveBeenCalledWith(contextMock, nextMock)
   })
 })
 
@@ -145,9 +170,8 @@ describe('#afterSignInWithGoogle', () => {
       ;(contextMock.get as MockFn).mockReturnValue(undefined)
     })
     test('エラーが投げられること', async () => {
-      const next = jest.fn()
       await expect(
-        authMiddlewares.afterSignInWithGoogle(contextMock, next),
+        authMiddlewares.afterSignInWithGoogle(contextMock, nextMock),
       ).rejects.toThrow('Unauthorized')
     })
   })
