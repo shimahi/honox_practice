@@ -7,7 +7,6 @@ declare module 'hono' {
     Bindings: {
       DB: D1Database
       NAME: string
-      GOOGLE_AUTH_CALLBACK_URL: string
       GOOGLE_AUTH_CLIENT_ID: string
       GOOGLE_AUTH_CLIENT_SECRET: string
     }
@@ -68,3 +67,5 @@ declare module 'hono/cookie' {
     opt?: CookieOptions,
   ) => void
 }
+
+export const { getCookie, setCookie, deleteCookie } = import('hono/cookie')

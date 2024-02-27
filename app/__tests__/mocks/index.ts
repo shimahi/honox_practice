@@ -7,19 +7,24 @@ import type { Context } from '@/global'
  * 各種クラスオブジェクトのモックと、コンストラクタ引数のContextを定義する
  */
 
-//Domainクラスおよびそのメンバのコンストラクタ引数に渡すコンテキスト
+// Honoサーバーでreq/resを扱うためのコンテキストオブジェクトのモック
 export const contextMock: Context = {
   env: {
-    DB: jest.fn()(),
-    NAME: jest.fn()(),
-  },
-} as Context
+    DB: undefined as unknown,
+    NAME: undefined as unknown,
+  } as Context['env'],
+  get: jest.fn(),
+  set: jest.fn(),
+} as unknown as Context
 
-// UserDomainクラスのインスタンスのモック
+export const userRepositoryMock = {
+  createUser: jest.fn(),
+  getUsers: jest.fn(),
+  getUserByGoogleProfileId: jest.fn(),
+}
+
 export const userDomainMock = {
-  repository: {
-    createUser: jest.fn(),
-    getUsers: jest.fn(),
-    getUserByGoogleProfileId: jest.fn(),
-  },
+  repository: userRepositoryMock,
+  createUser: jest.fn(),
+  getUserByProfileIds: jest.fn(),
 }

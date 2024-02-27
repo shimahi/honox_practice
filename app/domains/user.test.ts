@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, mock, test } from 'bun:test'
-import { contextMock, userDomainMock, userFixture } from '@/__tests__'
+import { contextMock, userFixture, userRepositoryMock } from '@/__tests__'
 import { faker } from '@faker-js/faker'
 import { UserDomain } from './user'
 
@@ -10,7 +10,7 @@ import { UserDomain } from './user'
  */
 // UserDomainの依存モジュールをモックする
 mock.module('@/repositories/user', () => ({
-  UserRepository: jest.fn().mockImplementation(() => userDomainMock.repository),
+  UserRepository: jest.fn().mockImplementation(() => userRepositoryMock),
 }))
 
 /**
@@ -23,14 +23,14 @@ describe('#getUsers', () => {
   test('repository.getUsersがコールされること', async () => {
     await subject.getUsers()
 
-    expect(userDomainMock.repository.getUsers).toHaveBeenCalled()
+    expect(userRepositoryMock.getUsers).toHaveBeenCalled()
   })
 })
 
 describe('#createUser', () => {
   beforeEach(() => {
-    userDomainMock.repository.getUserByGoogleProfileId.mockClear()
-    userDomainMock.repository.createUser.mockClear()
+    userRepositoryMock.getUserByGoogleProfileId.mockClear()
+    userRepositoryMock.createUser.mockClear()
   })
 
   describe('profileIdの一致するユーザーがすでにいる場合', () => {
@@ -38,9 +38,7 @@ describe('#createUser', () => {
     const userData = userFixture.build()
 
     beforeEach(() => {
-      userDomainMock.repository.getUserByGoogleProfileId.mockResolvedValue(
-        userData,
-      )
+      userRepositoryMock.getUserByGoogleProfileId.mockResolvedValue(userData)
     })
 
     test('repository.createUserはコールされず、そのユーザーを返す', async () => {
@@ -52,7 +50,7 @@ describe('#createUser', () => {
         },
       )
 
-      expect(userDomainMock.repository.createUser).not.toHaveBeenCalled()
+      expect(userRepositoryMock.createUser).not.toHaveBeenCalled()
       expect(result).toEqual(userData)
     })
   })
@@ -61,7 +59,7 @@ describe('#createUser', () => {
     const { id, ...userData } = userFixture.build()
 
     beforeEach(() => {
-      userDomainMock.repository.getUserByGoogleProfileId.mockResolvedValue(null)
+      userRepositoryMock.getUserByGoogleProfileId.mockResolvedValue(null)
     })
 
     test('repository.createUserがコールされること', async () => {
@@ -69,7 +67,7 @@ describe('#createUser', () => {
         .createUser({ googleProfileId: faker.string.uuid() }, userData)
         .catch(() => {})
 
-      expect(userDomainMock.repository.createUser).toHaveBeenCalled()
+      expect(userRepositoryMock.createUser).toHaveBeenCalled()
     })
   })
   describe('新規作成時にすでにaccountIdが重複するユーザーがいる場合', () => {
@@ -77,8 +75,8 @@ describe('#createUser', () => {
     const userData = userFixture.build()
 
     beforeEach(() => {
-      userDomainMock.repository.getUserByGoogleProfileId.mockResolvedValue(null)
-      userDomainMock.repository.createUser
+      userRepositoryMock.getUserByGoogleProfileId.mockResolvedValue(null)
+      userRepositoryMock.createUser
         .mockRejectedValueOnce(new Error(''))
         .mockResolvedValueOnce(userData)
     })
@@ -88,19 +86,19 @@ describe('#createUser', () => {
         { googleProfileId: userData.googleProfileId },
         userData,
       )
-      expect(userDomainMock.repository.createUser).toHaveBeenNthCalledWith(1, {
+      expect(userRepositoryMock.createUser).toHaveBeenNthCalledWith(1, {
         ...userData,
         id: expect.any(String),
         accountId: expect.any(String),
       })
-      expect(userDomainMock.repository.createUser).toHaveBeenCalledTimes(2)
+      expect(userRepositoryMock.createUser).toHaveBeenCalledTimes(2)
     })
   })
 })
 
 describe('#getUserByProfileId', () => {
   beforeEach(() => {
-    userDomainMock.repository.getUserByGoogleProfileId.mockClear()
+    userRepositoryMock.getUserByGoogleProfileId.mockClear()
   })
 
   describe('profileIdキーにgoogleを指定した場合', () => {
@@ -109,9 +107,9 @@ describe('#getUserByProfileId', () => {
     test('repository.getUserByGoogleProfileIdがコールされること', async () => {
       await subject.getUserByProfileIds({ googleProfileId })
 
-      expect(
-        userDomainMock.repository.getUserByGoogleProfileId,
-      ).toHaveBeenCalledWith(googleProfileId)
+      expect(userRepositoryMock.getUserByGoogleProfileId).toHaveBeenCalledWith(
+        googleProfileId,
+      )
     })
   })
 
@@ -123,9 +121,7 @@ describe('#getUserByProfileId', () => {
         otherProfileId,
       } as unknown as Parameters<UserDomain['getUserByProfileIds']>[0])
 
-      expect(
-        userDomainMock.repository.getUserByGoogleProfileId,
-      ).not.toHaveBeenCalled()
+      expect(userRepositoryMock.getUserByGoogleProfileId).not.toHaveBeenCalled()
     })
   })
 })

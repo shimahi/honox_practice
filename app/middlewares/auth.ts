@@ -9,7 +9,7 @@ import { HTTPException } from 'hono/http-exception'
 
 export const authMiddlewares = {
   /**
-   * cookieから認証状態を確認し、コンテキストにユーザー情報をセットする
+   * cookieが保持しているアクセストークンから認証状態を確認し、コンテキストにユーザー情報をセットする
    */
   async authorize(c: Context, next: Next) {
     const profileIds = await getProfileIds(c)
