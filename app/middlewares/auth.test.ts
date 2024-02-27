@@ -1,13 +1,14 @@
 import {
   afterAll,
-  beforeAll,
+  afterEach,
+  beforeEach,
   describe,
   expect,
   jest,
   mock,
   test,
 } from 'bun:test'
-import { contextMock, userDomainMock, userFixture } from '@/__tests__'
+import { contextMock, nextMock, userDomainMock, userFixture } from '@/__tests__'
 import { authMiddlewares } from './auth'
 
 /**
@@ -35,16 +36,41 @@ afterAll(() => {
 describe('#authorize', () => {
   describe('Cookieにアクセストークンが含まれ、該当するユーザーがDBに含まれる場合', () => {
     const user = userFixture.build()
-
-    beforeAll(() => {
+    beforeEach(() => {
       userDomainMock.getUserByProfileIds.mockResolvedValue(user)
     })
+    afterEach(() => userDomainMock.getUserByProfileIds.mockClear())
     test('コンテキスト変数にユーザー情報がセットされること', async () => {
-      const next = jest.fn()
-      await authMiddlewares.authorize(contextMock, next)
+      await authMiddlewares.authorize(contextMock, nextMock)
 
       expect(contextMock.set).toHaveBeenCalledWith('currentUser', user)
-      expect(next).toHaveBeenCalled()
+      expect(nextMock).toHaveBeenCalled()
+    })
+  })
+})
+describe('#authorizeWithError', () => {
+  describe('Cookieにアクセストークンが含まれ、該当するユーザーがDBに含まれる場合', () => {
+    const user = userFixture.build()
+    beforeEach(() => {
+      userDomainMock.getUserByProfileIds.mockResolvedValue(user)
+    })
+    afterEach(() => userDomainMock.getUserByProfileIds.mockClear())
+    test('コンテキスト変数にユーザー情報がセットされること', async () => {
+      await authMiddlewares.authorizeWithError(contextMock, nextMock)
+
+      expect(contextMock.set).toHaveBeenCalledWith('currentUser', user)
+      expect(nextMock).toHaveBeenCalled()
+    })
+  })
+  describe('Cookieにアクセストークンが含まれ、該当するユーザーがDBに含まれない場合', () => {
+    beforeEach(() => {
+      userDomainMock.getUserByProfileIds.mockResolvedValue(null)
+    })
+    afterEach(() => userDomainMock.getUserByProfileIds.mockClear())
+    test('エラーが投げられること', async () => {
+      await expect(
+        authMiddlewares.authorizeWithError(contextMock, nextMock),
+      ).rejects.toThrow('Unauthorized')
     })
   })
 })

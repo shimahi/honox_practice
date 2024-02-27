@@ -16,6 +16,8 @@ export const contextMock: Context = {
   get: jest.fn(),
   set: jest.fn(),
 } as unknown as Context
+// Honoサーバーで返すコールバック第二引数nextのモック
+export const nextMock = jest.fn()
 
 export const userRepositoryMock = {
   createUser: jest.fn(),
