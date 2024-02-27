@@ -18,6 +18,8 @@ export const contextMock: Context = {
 } as unknown as Context
 // Honoサーバーで返すコールバック第二引数nextのモック
 export const nextMock = jest.fn()
+// jest.fnの戻り値型、contextMockのメソッドをキャストするのに使用する
+export type MockFn = ReturnType<typeof jest.fn>
 
 export const userRepositoryMock = {
   createUser: jest.fn(),
