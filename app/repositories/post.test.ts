@@ -67,6 +67,63 @@ describe('#createPost', () => {
   })
 })
 
+describe('#paginatePosts', () => {
+  describe('パラメータが指定されていない場合', () => {
+    const newPosts = new Array(50)
+      .fill(0)
+      .map(() =>
+        postFixture.build({
+          createdAt: faker.date.past(),
+        }),
+      )
+      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    beforeEach(async () => {
+      await db.insert(posts).values(newPosts)
+    })
+    test('最初の10件が取得されること', async () => {
+      const subject = new PostRepository(contextMock.env.DB)
+      const result = await subject.paginatePosts()
+
+      expect(result).toEqual(
+        newPosts
+          .slice(0, 10)
+          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
+      )
+    })
+    test('createdAtの新しい順に取得されること', async () => {
+      const subject = new PostRepository(contextMock.env.DB)
+      const result = await subject.paginatePosts()
+
+      for (let i = 0; i < result.length - 1; i++) {
+        expect(result[i].createdAt > result[i + 1].createdAt).toBeTruthy()
+      }
+    })
+  })
+  describe('offsetパラメータを指定した場合', () => {
+    const newPosts = new Array(50)
+      .fill(0)
+      .map(() =>
+        postFixture.build({
+          createdAt: faker.date.past(),
+        }),
+      )
+      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    beforeEach(async () => {
+      await db.insert(posts).values(newPosts)
+    })
+    test('offsetから10件が取得されること', async () => {
+      const subject = new PostRepository(contextMock.env.DB)
+      const result = await subject.paginatePosts({ offset: 10 })
+
+      expect(result).toEqual(
+        newPosts
+          .slice(10, 20)
+          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
+      )
+    })
+  })
+})
+
 describe('#getPost', () => {
   const postData = postFixture.build()
 

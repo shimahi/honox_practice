@@ -1,6 +1,6 @@
 import { RepositoryBase } from '@/repositories/_repositoryBase'
 import { type Post, posts } from '@/schemas'
-import { type InferInsertModel, eq } from 'drizzle-orm'
+import { type InferInsertModel, desc, eq } from 'drizzle-orm'
 export class PostRepository extends RepositoryBase {
   /**
    * ポストを作成する
@@ -10,6 +10,19 @@ export class PostRepository extends RepositoryBase {
    */
   async createPost(input: InferInsertModel<typeof posts>) {
     return (await this.drizzle.insert(posts).values(input).returning())[0]
+  }
+
+  paginatePosts({
+    limit = 10,
+    offset = 0,
+  }: { limit?: number; offset?: number } = {}) {
+    return this.drizzle
+      .select()
+      .from(posts)
+      .orderBy(desc(posts.createdAt))
+      .limit(limit)
+      .offset(offset)
+      .all()
   }
 
   /**
