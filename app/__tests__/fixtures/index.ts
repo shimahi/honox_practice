@@ -32,3 +32,10 @@ export const postFixture = Factory.define<Post>(() => {
     updatedAt: new Date('2024-01-01'),
   }
 })
+export const postInputFixture = Factory.define<
+  Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+>(() => {
+  return {
+    content: faker.lorem.paragraphs(3),
+  }
+})

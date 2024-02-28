@@ -26,7 +26,7 @@ export class UserDomain {
    */
   async createUser(
     profileIds: ProfileIds,
-    inputs: Pick<User, 'accountId' | 'displayName'>,
+    inputs: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'googleProfileId'>,
   ) {
     const { key, profileId } = parseProfileId(profileIds)
     const user = await this.getUserByProfileIds(profileIds)

@@ -21,14 +21,34 @@ export const nextMock = jest.fn()
 // jest.fnの戻り値型、contextMockのメソッドをキャストするのに使用する
 export type MockFn = ReturnType<typeof jest.fn>
 
+/**
+ * リポジトリ層のモック
+ */
 export const userRepositoryMock = {
   createUser: jest.fn(),
   getUsers: jest.fn(),
   getUserByGoogleProfileId: jest.fn(),
 }
+export const postRepositoryMock = {
+  createPost: jest.fn(),
+  paginatePosts: jest.fn(),
+  paginatePostsByUserId: jest.fn(),
+  getPost: jest.fn(),
+  deletePost: jest.fn(),
+}
 
+/**
+ * ドメイン層のモック
+ */
 export const userDomainMock = {
   repository: userRepositoryMock,
   createUser: jest.fn(),
   getUserByProfileIds: jest.fn(),
+}
+export const postDomainMock = {
+  repository: postRepositoryMock,
+  createPost: jest.fn(),
+  paginatePosts: jest.fn(),
+  paginatePostsByUserId: jest.fn(),
+  getPost: jest.fn(),
 }

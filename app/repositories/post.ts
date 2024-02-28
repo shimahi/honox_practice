@@ -75,10 +75,7 @@ export class PostRepository extends RepositoryBase {
     return (
       await this.drizzle
         .update(posts)
-        .set({
-          ...input,
-          updatedAt: input.updatedAt ?? new Date(),
-        })
+        .set(input)
         .where(eq(posts.id, id))
         .returning()
     )[0]
