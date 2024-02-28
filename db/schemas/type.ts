@@ -5,7 +5,7 @@
  */
 
 import type { InferSelectModel } from 'drizzle-orm'
+import type * as schema from '.'
 
-import type { users } from '.'
-
-export type User = InferSelectModel<typeof users>
+export type User = InferSelectModel<typeof schema.users>
+export type Post = InferSelectModel<typeof schema.posts>
