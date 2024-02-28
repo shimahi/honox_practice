@@ -19,11 +19,14 @@ console.log('Seeding Started...')
 const newUsers: User[] = new Array(10).fill(0).map(() => userFixture.build())
 await db.insert(users).values(newUsers)
 
-const newPosts: Post[] = new Array(20).fill(0).map(() =>
-  postFixture.build({
-    userId: newUsers[Math.floor(Math.random() * newUsers.length)].id,
-  }),
-)
+const newPosts: Post[] = new Array(20)
+  .fill(0)
+  .map(() =>
+    postFixture.build({
+      userId: newUsers[Math.floor(Math.random() * newUsers.length)].id,
+    }),
+  )
+  .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
 await db.insert(posts).values(newPosts)
 
 console.log('Seeding Completed!')

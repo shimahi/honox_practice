@@ -12,6 +12,11 @@ export class PostRepository extends RepositoryBase {
     return (await this.drizzle.insert(posts).values(input).returning())[0]
   }
 
+  /**
+   * offsetを視点にlimit(デフォルト10)単位でポストを取得する
+   * @param {number} limit 取得する件数
+   * @param {number} offset 取得する開始位置
+   */
   paginatePosts({
     limit = 10,
     offset = 0,
@@ -19,6 +24,26 @@ export class PostRepository extends RepositoryBase {
     return this.drizzle
       .select()
       .from(posts)
+      .orderBy(desc(posts.createdAt))
+      .limit(limit)
+      .offset(offset)
+      .all()
+  }
+
+  /**
+   *
+   * @param {string} userId ユーザーID
+   * @param {number} limit 取得する件数
+   * @param {number} offset 取得する開始位置
+   */
+  paginatePostsByUserId(
+    userId: string,
+    { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
+  ) {
+    return this.drizzle
+      .select()
+      .from(posts)
+      .where(eq(posts.userId, userId))
       .orderBy(desc(posts.createdAt))
       .limit(limit)
       .offset(offset)
@@ -40,6 +65,8 @@ export class PostRepository extends RepositoryBase {
    * NOTE:
    * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
    * https://github.com/drizzle-team/drizzle-orm/issues/777
+   * @param {string} userId
+   * @param {Partial<InferInsertModel<typeof posts>>} input
    */
   async updatePost(
     id: Post['id'],
@@ -55,5 +82,13 @@ export class PostRepository extends RepositoryBase {
         .where(eq(posts.id, id))
         .returning()
     )[0]
+  }
+
+  /**
+   * ポストを削除する
+   * @param {string} id
+   */
+  deletePost(id: Post['id']) {
+    return this.drizzle.delete(posts).where(eq(posts.id, id))
   }
 }
