@@ -7,7 +7,7 @@
  */
 export const truncate = (
   content: string,
-  maxLength = 30,
+  maxLength = 100,
   ellipsis = true,
   showNextLine = false,
 ) => {

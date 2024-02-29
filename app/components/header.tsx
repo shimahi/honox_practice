@@ -37,16 +37,18 @@ export default function Header({ currentUser }: Props) {
           `}
         >
           <div>
-            <img
-              class={css`
-                max-width: 100px;
-                @media (max-width: 640px) {
-                  max-width: 100%;
-                }
-              `}
-              src="/static/images/ssl.jpg"
-              alt="Steller Sea Lion"
-            />
+            <a href="/">
+              <img
+                class={css`
+                  max-width: 100px;
+                  @media (max-width: 640px) {
+                    max-width: 100%;
+                  }
+                `}
+                src="/static/images/ssl.jpg"
+                alt="Steller Sea Lion"
+              />
+            </a>
           </div>
           <h1
             class={css`

@@ -30,7 +30,11 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
           }
         `}
       >
-        <div>
+        <div
+          class={css`
+            margin-top: 36px;
+          `}
+        >
           {posts?.map((post) => (
             <div
               class={css`
@@ -45,8 +49,16 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
               key={post.id}
             >
               <a href={`/users/${post.userId}`}>{post.user.displayName}</a>
-              <p> {truncate(post.content)}</p>
-              <p>{post.createdAt}</p>
+              <a
+                href={`/posts/${post.id}`}
+                class={css`
+                  text-decoration: none;
+                  color: inherit;
+                `}
+              >
+                <p> {truncate(post.content)}</p>
+                <p>{post.createdAt}</p>
+              </a>
             </div>
           ))}
         </div>
