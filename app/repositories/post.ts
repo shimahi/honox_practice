@@ -1,15 +1,13 @@
 import { RepositoryBase } from '@/repositories/_repositoryBase'
 import { type Post, posts } from '@/schemas'
-import { type InferInsertModel, desc, eq } from 'drizzle-orm'
+import { type InferInsertModel, eq } from 'drizzle-orm'
+
 export class PostRepository extends RepositoryBase {
   /**
    * ポストを作成する
-   * NOTE:
-   * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
-   * https://github.com/drizzle-team/drizzle-orm/issues/777
    */
-  async createPost(input: InferInsertModel<typeof posts>) {
-    return (await this.drizzle.insert(posts).values(input).returning())[0]
+  createPost(input: InferInsertModel<typeof posts>) {
+    return this.drizzle.insert(posts).values(input).returning().get()
   }
 
   /**
@@ -21,13 +19,14 @@ export class PostRepository extends RepositoryBase {
     limit = 10,
     offset = 0,
   }: { limit?: number; offset?: number } = {}) {
-    return this.drizzle
-      .select()
-      .from(posts)
-      .orderBy(desc(posts.createdAt))
-      .limit(limit)
-      .offset(offset)
-      .all()
+    return this.drizzle.query.posts.findMany({
+      orderBy: (posts, { desc }) => desc(posts.createdAt),
+      limit,
+      offset,
+      with: {
+        user: true,
+      },
+    })
   }
 
   /**
@@ -40,45 +39,40 @@ export class PostRepository extends RepositoryBase {
     userId: string,
     { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
   ) {
-    return this.drizzle
-      .select()
-      .from(posts)
-      .where(eq(posts.userId, userId))
-      .orderBy(desc(posts.createdAt))
-      .limit(limit)
-      .offset(offset)
-      .all()
+    return this.drizzle.query.posts
+      .findMany({
+        where: (posts, { eq }) => eq(posts.userId, userId),
+        orderBy: (posts, { desc }) => desc(posts.createdAt),
+        limit,
+        offset,
+      })
+      .execute()
   }
 
   /**
    * IDに一致するポストを取得する
-   * NOTE:
-   * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
-   * https://github.com/drizzle-team/drizzle-orm/issues/777
    */
   async getPost(id: Post['id']) {
-    return (await this.drizzle.select().from(posts).where(eq(posts.id, id)))[0]
+    const result = await this.drizzle.query.posts.findFirst({
+      where: eq(posts.id, id),
+      with: {
+        user: true,
+      },
+    })
+
+    return result
   }
 
-  /**
-   * ポストを更新する
-   * NOTE:
-   * DrizzleのバグでBunのテストで get() メソッドが機能しないため、配列の0番目を返している
-   * https://github.com/drizzle-team/drizzle-orm/issues/777
-   * @param {string} userId
-   * @param {Partial<InferInsertModel<typeof posts>>} input
-   */
   async updatePost(
     id: Post['id'],
     input: Partial<InferInsertModel<typeof posts>>,
   ) {
-    return (
-      await this.drizzle
-        .update(posts)
-        .set(input)
-        .where(eq(posts.id, id))
-        .returning()
-    )[0]
+    return await this.drizzle
+      .update(posts)
+      .set(input)
+      .where(eq(posts.id, id))
+      .returning()
+      .get()
   }
 
   /**

@@ -18,7 +18,8 @@
         "noUnusedImports": "warn"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noBannedTypes": "warn"
       }
     }
   },

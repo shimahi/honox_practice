@@ -10,9 +10,10 @@ import type { Post, User } from '@/schemas/type'
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 
 import { posts, users } from './schemas'
+import * as schema from './schemas'
 
 const sqlite = new Database('./.mf/d1/DB/db.sqlite')
-const db = drizzle(sqlite)
+const db = drizzle(sqlite, { schema })
 
 console.log('Seeding Started...')
 

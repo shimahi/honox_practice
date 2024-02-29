@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export type * from './type'
@@ -38,3 +38,11 @@ export const posts = sqliteTable('posts', {
   /** ポストの内容 */
   content: text('content').notNull(),
 })
+
+export const userRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}))
+
+export const postRelations = relations(posts, ({ one }) => ({
+  user: one(users, { fields: [posts.userId], references: [users.id] }),
+}))

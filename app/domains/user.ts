@@ -18,6 +18,14 @@ export class UserDomain {
   }
 
   /**
+   * IDに一致するユーザーを取得する
+   * @param {string} id
+   */
+  getUser(id: User['id']) {
+    return this.repository.getUser(id)
+  }
+
+  /**
    * 認証プロバイダーのプロファイルIDからユーザーを作成する
    * 既に存在する場合は作成をスキップして、そのユーザーを返す
    * @param {ProfileIds} profileIds 検索したいプロファイルIDのカラム名

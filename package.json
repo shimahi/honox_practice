@@ -22,7 +22,7 @@
     "lint": "biome lint ./app",
     "format": "biome format ./app --write",
     "check": "biome check --apply ./app",
-    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/"
+    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/ && $npm_execpath test app/utils"
   },
   "private": true,
   "dependencies": {

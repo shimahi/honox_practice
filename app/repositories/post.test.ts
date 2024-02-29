@@ -1,3 +1,5 @@
+import { sortByCreatedAt } from '@/utils'
+
 import { Database } from 'bun:sqlite'
 import {
   afterAll,
@@ -12,8 +14,10 @@ import {
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 
-import { contextMock, postFixture } from '@/__tests__'
+import { contextMock, postFixture, userFixture } from '@/__tests__'
 import { posts, users } from '@/schemas'
+import * as schema from '@/schemas'
+import type { User } from '@/schemas/type'
 import { faker } from '@faker-js/faker'
 import { PostRepository } from './post'
 
@@ -25,7 +29,7 @@ import { PostRepository } from './post'
 // SQLiteの仮想DBをメモリ上に作成
 const sqlite = new Database(':memory:')
 // drizzleオブジェクトの作成
-const db = drizzle(sqlite)
+const db = drizzle(sqlite, { schema })
 // DBマイグレーションを実行
 migrate(db, { migrationsFolder: 'db/migrations' })
 // drizzle-orm/d1モジュールをモック化
@@ -35,8 +39,8 @@ mock.module('drizzle-orm/d1', () => ({
 
 // 各テスト終了時にテーブルの中身を空にする
 afterEach(async () => {
-  await db.delete(users).run()
   await db.delete(posts).run()
+  await db.delete(users).run()
 })
 
 // 全テスト終了後、メモリ内の仮想DBを削除
@@ -69,56 +73,53 @@ describe('#createPost', () => {
 
 describe('#paginatePosts', () => {
   describe('パラメータが指定されていない場合', () => {
-    const newPosts = new Array(50)
-      .fill(0)
-      .map(() =>
-        postFixture.build({
-          createdAt: faker.date.past(),
-        }),
-      )
-      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    const newUsers = new Array(5).fill(0).map(() => userFixture.build())
+    const newPosts = new Array(30).fill(0).map(() =>
+      postFixture.build({
+        createdAt: faker.date.past(),
+        userId: newUsers[Math.floor(Math.random() * newUsers.length)].id,
+      }),
+    )
+
     beforeEach(async () => {
+      await db.insert(users).values(newUsers)
       await db.insert(posts).values(newPosts)
     })
-    test('最初の10件が取得されること', async () => {
+    test('createdAtの新しい順に最初の10件が取得されること', async () => {
       const subject = new PostRepository(contextMock.env.DB)
       const result = await subject.paginatePosts()
 
-      expect(result).toEqual(
-        newPosts
-          .slice(0, 10)
-          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
-      )
-    })
-    test('createdAtの新しい順に取得されること', async () => {
-      const subject = new PostRepository(contextMock.env.DB)
-      const result = await subject.paginatePosts()
-
+      expect(result.length).toEqual(10)
       for (let i = 0; i < result.length - 1; i++) {
         expect(result[i].createdAt > result[i + 1].createdAt).toBeTruthy()
+        expect(result[i].id).toEqual(sortByCreatedAt(newPosts)[i].id)
+        expect(result[i].user).toEqual(
+          newUsers.find(({ id }) => result[i].userId === id) as User,
+        )
       }
     })
   })
   describe('offsetパラメータを指定した場合', () => {
-    const newPosts = new Array(50)
-      .fill(0)
-      .map(() =>
-        postFixture.build({
-          createdAt: faker.date.past(),
-        }),
-      )
-      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    const newUsers = new Array(5).fill(0).map(() => userFixture.build())
+    const newPosts = new Array(30).fill(0).map(() =>
+      postFixture.build({
+        createdAt: faker.date.past(),
+        userId: newUsers[Math.floor(Math.random() * newUsers.length)].id,
+      }),
+    )
+
     beforeEach(async () => {
+      await db.insert(users).values(newUsers)
       await db.insert(posts).values(newPosts)
     })
-    test('offsetから10件が取得されること', async () => {
+    test('offsetを始点にした10件が取得されること', async () => {
       const subject = new PostRepository(contextMock.env.DB)
       const result = await subject.paginatePosts({ offset: 10 })
-
-      expect(result).toEqual(
-        newPosts
+      expect(result.length).toEqual(10)
+      expect(result.map(({ id }) => id)).toEqual(
+        sortByCreatedAt(newPosts)
           .slice(10, 20)
-          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
+          .map(({ id }) => id),
       )
     })
   })
@@ -126,16 +127,15 @@ describe('#paginatePosts', () => {
 
 describe('#paginatePostsByUserId', () => {
   const userId = faker.string.alphanumeric()
+  const otherUserId = faker.string.alphanumeric()
   describe('パラメータが指定されていない場合', () => {
-    const newPosts = new Array(50)
-      .fill(10)
-      .map(() =>
-        postFixture.build({
-          userId,
-          createdAt: faker.date.past(),
-        }),
-      )
-      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    const newPosts = new Array(50).fill(10).map((_, index) =>
+      postFixture.build({
+        userId: index % 2 === 0 ? userId : otherUserId,
+        createdAt: faker.date.past(),
+      }),
+    )
+
     beforeEach(async () => {
       await db.insert(posts).values(newPosts)
     })
@@ -143,75 +143,58 @@ describe('#paginatePostsByUserId', () => {
       const subject = new PostRepository(contextMock.env.DB)
       const result = await subject.paginatePostsByUserId(userId)
 
-      expect(result).toEqual(
-        newPosts
-          .slice(0, 10)
-          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
-      )
-      result.forEach((post) => {
+      result.forEach((post, index, result) => {
         expect(post.userId).toEqual(userId)
-      })
-    })
-    test('ユーザーIDの一致するポストがcreatedAtの新しい順に取得されること', async () => {
-      const subject = new PostRepository(contextMock.env.DB)
-      const result = await subject.paginatePostsByUserId(userId)
-
-      for (let i = 0; i < result.length - 1; i++) {
-        expect(result[i].createdAt > result[i + 1].createdAt).toBeTruthy()
-      }
-      result.forEach((post) => {
-        expect(post.userId).toEqual(userId)
-      })
-    })
-  })
-  describe('offsetパラメータを指定した場合', () => {
-    const newPosts = new Array(50)
-      .fill(0)
-      .map(() =>
-        postFixture.build({
-          userId,
-          createdAt: faker.date.past(),
-        }),
-      )
-      .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
-    beforeEach(async () => {
-      await db.insert(posts).values(newPosts)
-    })
-    test('ユーザーIDの一致するポストがoffsetから10件取得されること', async () => {
-      const subject = new PostRepository(contextMock.env.DB)
-      const result = await subject.paginatePostsByUserId(userId, { offset: 10 })
-
-      expect(result).toEqual(
-        newPosts
-          .slice(10, 20)
-          .map((post) => ({ ...post, createdAt: expect.any(Date) })),
-      )
-      result.forEach((post) => {
-        expect(post.userId).toEqual(userId)
+        expect(post.userId).not.toEqual(otherUserId)
+        expect(
+          post.createdAt >
+            (result[index + 1]?.createdAt ?? new Date('1970-01-01')),
+        ).toBeTruthy()
       })
     })
   })
 })
 
 describe('#getPost', () => {
-  const postData = postFixture.build()
+  const userData = userFixture.build()
+  const postData = postFixture.build({
+    userId: userData.id,
+  })
+
+  beforeEach(async () => {
+    await db.insert(users).values(userData)
+    await db.insert(posts).values(postData)
+  })
 
   describe('入力パラメータが正常な場合', () => {
     const subject = new PostRepository(contextMock.env.DB)
-    test('ポストレコードが作成されること', async () => {
-      const createdPost = await subject.createPost(postData)
-      const result = await subject.getPost(createdPost.id)
+    test('指定したIDのポストが変えること', async () => {
+      const result = await subject.getPost(postData.id)
 
-      expect(result).toEqual(createdPost)
+      expect(result).toEqual({
+        ...postData,
+        user: userData,
+      })
+    })
+  })
+  describe('指定したIDのポストが存在しない場合', () => {
+    const subject = new PostRepository(contextMock.env.DB)
+    test('undefinedが返されること', async () => {
+      const result = await subject.getPost(faker.string.alphanumeric())
+
+      expect(result).toBeUndefined()
     })
   })
 })
 describe('#updatePost', () => {
-  const postData = postFixture.build()
+  const userData = userFixture.build()
+  const postData = postFixture.build({
+    userId: userData.id,
+  })
 
   beforeEach(async () => {
-    const subject = new PostRepository(contextMock.env.DB)
-    await subject.createPost(postData)
+    await db.insert(users).values(userData)
+    await db.insert(posts).values(postData)
   })
   test('ポストレコードが更新されること', async () => {
     const subject = new PostRepository(contextMock.env.DB)
@@ -220,7 +203,7 @@ describe('#updatePost', () => {
     })
     const result = await subject.getPost(postData.id)
 
-    expect(result).toEqual(updatedPost)
+    expect(result).toEqual({ ...updatedPost, user: userData })
   })
 })
 

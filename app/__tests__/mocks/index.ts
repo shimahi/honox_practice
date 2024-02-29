@@ -27,6 +27,7 @@ export type MockFn = ReturnType<typeof jest.fn>
 export const userRepositoryMock = {
   createUser: jest.fn(),
   getUsers: jest.fn(),
+  getUser: jest.fn(),
   getUserByGoogleProfileId: jest.fn(),
 }
 export const postRepositoryMock = {
