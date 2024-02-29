@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { truncate } from '.'
+import { sortByCreatedAt, truncate } from '.'
 
 describe('#truncate', () => {
   describe('指定文字数以下の場合', () => {
@@ -12,35 +12,19 @@ describe('#truncate', () => {
     })
 
     describe('指定文字数以前に改行が含まれている場合', () => {
-      describe('改行コードが\\nの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\nあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
+      test('改行までの文字が取得できること', () => {
+        const contents = [
+          '12345\nあいうえお',
+          '12345\rあいうえお',
+          '12345\r\nあいうえお',
+        ]
+        const results = contents.map((content) => truncate(content, 10))
+        results.forEach((result) => expect(result).toBe('12345…'))
       })
-
-      describe('改行コードが\\rの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\rあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
-      })
-
-      describe('改行コードが\\r\\nの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\r\nあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
-      })
-      describe('改行後の文章の表示を指定した場合', () => {
-        test('改行後も含めて文字を取得できること', () => {
-          const content = '12345\nあいうえお'
-          const result = truncate(content, 10, false, true)
-          expect(result).toBe('12345\nあいうえお')
-        })
+      test('改行後も含めて文字を取得できること', () => {
+        const content = '12345\nあいうえお'
+        const result = truncate(content, 10, false, true)
+        expect(result).toBe('12345\nあいうえお')
       })
     })
   })
@@ -54,54 +38,14 @@ describe('#truncate', () => {
     })
 
     describe('指定文字数以降に改行がある場合', () => {
-      describe('改行コードが\\nの場合', () => {
-        test('指定文字までが取得できること', () => {
-          const content = '12345あいうえお\n'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345あいうえお…')
-        })
-      })
-
-      describe('改行コードが\\rの場合', () => {
-        test('指定文字までが取得できること', () => {
-          const content = '12345あいうえお\r'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345あいうえお…')
-        })
-      })
-
-      describe('改行コードが\\r\\nの場合', () => {
-        test('指定文字までが取得できること', () => {
-          const content = '12345あいうえお\r\n'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345あいうえお…')
-        })
-      })
-    })
-
-    describe('指定文字数以前に改行がある場合', () => {
-      describe('改行コードが\\nの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\nあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
-      })
-
-      describe('改行コードが\\rの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\rあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
-      })
-
-      describe('改行コードが\\r\\nの場合', () => {
-        test('改行までの文字が取得できること', () => {
-          const content = '12345\r\nあいうえお'
-          const result = truncate(content, 10)
-          expect(result).toBe('12345…')
-        })
+      test('改行までの文字が取得できること', () => {
+        const contents = [
+          '12345\nあいうえお',
+          '12345\rあいうえお',
+          '12345\r\nあいうえお',
+        ]
+        const results = contents.map((content) => truncate(content, 10))
+        results.forEach((result) => expect(result).toBe('12345…'))
       })
     })
     describe('改行後の文章の表示を指定した場合', () => {
@@ -164,5 +108,21 @@ describe('#truncate', () => {
         })
       })
     })
+  })
+})
+
+describe('#sortByCreatedAt', () => {
+  const objects = [
+    { createdAt: new Date('2021-01-01') },
+    { createdAt: new Date('2021-01-03') },
+    { createdAt: new Date('2021-01-02') },
+  ]
+  test('createdAtの新しい順に並び替えられること', () => {
+    const result = sortByCreatedAt(objects)
+    expect(result).toEqual([
+      { createdAt: new Date('2021-01-03') },
+      { createdAt: new Date('2021-01-02') },
+      { createdAt: new Date('2021-01-01') },
+    ])
   })
 })

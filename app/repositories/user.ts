@@ -25,12 +25,12 @@ export class UserRepository extends RepositoryBase {
   getUser(userId: string) {
     return this.drizzle.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, userId),
-      // with: {
-      //   posts: {
-      //     orderBy: (posts, { desc }) => desc(posts.createdAt),
-      //     limit: 20,
-      //   },
-      // },
+      with: {
+        posts: {
+          orderBy: (posts, { desc }) => desc(posts.createdAt),
+          limit: 20,
+        },
+      },
     })
   }
 

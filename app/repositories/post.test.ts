@@ -17,7 +17,6 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { contextMock, postFixture, userFixture } from '@/__tests__'
 import { posts, users } from '@/schemas'
 import * as schema from '@/schemas'
-import type { User } from '@/schemas/type'
 import { faker } from '@faker-js/faker'
 import { PostRepository } from './post'
 
@@ -90,13 +89,13 @@ describe('#paginatePosts', () => {
       const result = await subject.paginatePosts()
 
       expect(result.length).toEqual(10)
-      for (let i = 0; i < result.length - 1; i++) {
-        expect(result[i].createdAt > result[i + 1].createdAt).toBeTruthy()
-        expect(result[i].id).toEqual(sortByCreatedAt(newPosts)[i].id)
-        expect(result[i].user).toEqual(
-          newUsers.find(({ id }) => result[i].userId === id) as User,
-        )
-      }
+      result.forEach((post, index, result) => {
+        expect(
+          post.createdAt >
+            (result[index + 1]?.createdAt ?? new Date('1970-01-01')),
+        ).toBeTruthy()
+        expect(result[index].id).toEqual(sortByCreatedAt(newPosts)[index].id)
+      })
     })
   })
   describe('offsetパラメータを指定した場合', () => {

@@ -115,7 +115,10 @@ describe('#getUser', () => {
     const subject = new UserRepository(contextMock.env.DB)
     const result = await subject.getUser(userId)
 
-    expect(result).toEqual(target)
+    expect(result).toEqual({
+      ...target,
+      posts: [],
+    })
   })
 })
 
