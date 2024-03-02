@@ -1,5 +1,6 @@
 import { UserDomain } from '@/domains/user'
 import type { Context } from '@/global'
+import type { User } from '@/schemas'
 
 import { googleAuth } from '@hono/oauth-providers/google'
 import type { Next } from 'hono'
@@ -9,13 +10,11 @@ import { HTTPException } from 'hono/http-exception'
 
 export const authMiddlewares = {
   /**
-   * cookieが保持しているアクセストークンから認証状態を確認し、コンテキストにユーザー情報をセットする
+   * ログインユーザーを確認するミドルウェア
    */
   async authorize(c: Context, next: Next) {
-    const profileIds = await getProfileIds(c)
-    const userDomain = new UserDomain(c)
-    const user = await userDomain.getUserByProfileIds(profileIds)
-    c.set('currentUser', user)
+    await authorize(c)
+
     return next()
   },
   /**
@@ -23,14 +22,12 @@ export const authMiddlewares = {
    * ログインしていない場合にエラーを投げる
    */
   async authorizeWithError(c: Context, next: Next) {
-    const profileIds = await getProfileIds(c)
-    const userDomain = new UserDomain(c)
-    const user = await userDomain.getUserByProfileIds(profileIds)
+    const user = await authorize(c)
+
     if (!user) {
       throw new HTTPException(401, { message: 'Unauthorized' })
     }
 
-    c.set('currentUser', user)
     await next()
   },
   /**
@@ -74,15 +71,17 @@ export const authMiddlewares = {
       secure: true,
       path: '/',
     })
-    // ユーザー情報をDB登録する。登録済みの場合はスキップ。
+    // ユーザー情報を取得(新規の場合は登録)する
     const userDomain = new UserDomain(c)
-    await userDomain.createUser(
+    const user = await userDomain.createUser(
       { googleProfileId: googleUser.id ?? null },
       {
         accountId: `${googleUser.email?.split('@')[0].replace(/\./g, '')}`,
         displayName: googleUser.name ?? 'anonymous',
       },
     )
+
+    c.set('currentUser', user)
 
     return next()
   },
@@ -113,4 +112,21 @@ function getGoogleProfileId(accessToken: string | undefined) {
   )
     .then((res) => res.json() as Promise<{ sub?: string }>)
     .then(({ sub }) => sub ?? null)
+}
+
+/**
+ * 現在のログインユーザーを返す
+ * cookieが保持しているアクセストークンから認証状態を確認し、コンテキストにユーザー情報をセットする
+ */
+export async function authorize(c: Context): Promise<User | null> {
+  if (c.get('currentUser')) return c.get('currentUser')
+
+  const userDomain = new UserDomain(c)
+  const user =
+    (await userDomain.getUserByProfileIds(await getProfileIds(c))) ?? null
+
+  if (user) {
+    c.set('currentUser', user)
+  }
+  return user
 }

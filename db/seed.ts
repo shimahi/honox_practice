@@ -6,7 +6,7 @@
 
 import { Database } from 'bun:sqlite'
 import { postFixture, userFixture } from '@/__tests__'
-import type { Post, User } from '@/schemas/type'
+import type { Post, User } from '@/schemas'
 import { drizzle } from 'drizzle-orm/bun-sqlite'
 
 import { posts, users } from './schemas'

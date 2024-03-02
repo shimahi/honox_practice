@@ -9,7 +9,7 @@ import { faker } from '@faker-js/faker'
 import { createId } from '@paralleldrive/cuid2'
 import { Factory } from 'fishery'
 
-import type { Post, User } from '@/schemas/type'
+import type { Post, User } from '@/schemas'
 
 export const userFixture = Factory.define<User>(() => {
   return {

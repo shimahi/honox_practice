@@ -6,8 +6,14 @@ export class PostRepository extends RepositoryBase {
   /**
    * ポストを作成する
    */
-  createPost(input: InferInsertModel<typeof posts>) {
-    return this.drizzle.insert(posts).values(input).returning().get()
+  async createPost(input: InferInsertModel<typeof posts>) {
+    const result = await this.drizzle
+      .insert(posts)
+      .values(input)
+      .returning()
+      .get()
+
+    return result
   }
 
   /**
@@ -15,7 +21,7 @@ export class PostRepository extends RepositoryBase {
    * @param {number} limit 取得する件数
    * @param {number} offset 取得する開始位置
    */
-  paginatePosts({
+  async paginatePosts({
     limit = 10,
     offset = 0,
   }: { limit?: number; offset?: number } = {}) {

@@ -16,7 +16,6 @@
     "isolatedModules": true,
     "paths": {
       "@/schemas": ["db/schemas/index.ts"],
-      "@/schemas/*": ["db/schemas/*"],
       "@/*": ["app/*"],
       "hono/cookie": ["app/global.d.ts"]
     }

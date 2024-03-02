@@ -1,9 +1,10 @@
+import PostBox from '@/components/features/postBox'
 import Header from '@/components/header'
 import { PostDomain } from '@/domains/post'
 import { UserDomain } from '@/domains/user'
 import { authMiddlewares } from '@/middlewares/auth'
-import { truncate } from '@/utils'
 import { css } from 'hono/css'
+import { HTTPException } from 'hono/http-exception'
 import { createRoute } from 'honox/factory'
 
 export default createRoute(authMiddlewares.authorize, async (c) => {
@@ -13,6 +14,10 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
   const postDomain = new PostDomain(c)
   const posts = await postDomain.paginatePostsByUserId(userId)
   const currentUser = c.get('currentUser')
+
+  if (!user) {
+    throw new HTTPException(404, { message: 'Not Found' })
+  }
 
   if (!user)
     return c.render(
@@ -66,30 +71,7 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
           `}
         >
           {posts?.map((post) => (
-            <a
-              href={`/posts/${post.id}`}
-              class={css`
-                text-decoration: none;
-                color: inherit;
-              `}
-            >
-              <div
-                class={css`
-                  padding: 15px;
-                  border-radius: 5px;
-                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                  margin-bottom: 20px;
-                  background-color: ${
-                    currentUser?.id === post.userId ? '#f9e9d9' : '#faf8fa'
-                  };
-                `}
-                key={post.id}
-              >
-                {user.displayName}
-                <p> {truncate(post.content)}</p>
-                <p>{post.createdAt}</p>
-              </div>
-            </a>
+            <PostBox post={post} currentUser={currentUser} />
           ))}
         </div>
       </div>

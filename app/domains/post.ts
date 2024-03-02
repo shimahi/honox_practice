@@ -35,7 +35,7 @@ export class PostDomain {
    */
   pagenatePosts({
     limit = 10,
-    offset = 10,
+    offset = 0,
   }: Parameters<PostRepository['paginatePosts']>[0] = {}) {
     return this.repository.paginatePosts({ limit, offset })
   }

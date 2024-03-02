@@ -4,6 +4,7 @@
   "scripts": {
     "// git clone したら最初にやる": "",
     "setup": "$npm_execpath install && $npm_execpath run seed:dev && cp -n .env.example .env && cp -n wrangler.toml.example wrangler.toml",
+    "postinstall": "cp -f drizzle-patch-session.js node_modules/drizzle-orm/bun-sqlite/session.js",
     "// ローカルサーバーの起動": "",
     "dev": "vite",
     "// アプリのビルド": "",
