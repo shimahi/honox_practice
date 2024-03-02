@@ -4,11 +4,12 @@ import { css } from 'hono/css'
 import PostBox from '../features/postBox'
 
 type Props = {
-  post: Post & { user?: User }
   currentUser: User | null
+  user: User
+  posts: Post[]
 }
 
-export default function PostDetail({ post, currentUser }: Props) {
+export default function PostDetail({ user, posts, currentUser }: Props) {
   return (
     <>
       <Header currentUser={currentUser} />
@@ -28,7 +29,17 @@ export default function PostDetail({ post, currentUser }: Props) {
           }
         `}
       >
-        <PostBox post={post} currentUser={currentUser} shouldExtend />
+        <p>{user.accountId}</p>
+        <h3>{user.displayName}</h3>
+        <div
+          class={css`
+            margin-top: 36px;
+          `}
+        >
+          {posts?.map((post) => (
+            <PostBox post={post} currentUser={currentUser} />
+          ))}
+        </div>
       </div>
     </>
   )

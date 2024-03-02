@@ -4,10 +4,12 @@ import { createElement } from '@/middlewares'
 import { authMiddlewares } from '@/middlewares/auth'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+
 const app = new Hono()
 
 app.get('/:postId', authMiddlewares.authorize, async (c) => {
   const user = c.get('currentUser')
+
   const { postId } = c.req.param()
   const postDomain = new PostDomain(c)
   const post = await postDomain.getPost(postId)
@@ -16,12 +18,9 @@ app.get('/:postId', authMiddlewares.authorize, async (c) => {
     throw new HTTPException(404, { message: 'Not Found' })
   }
 
-  return createElement(
-    c,
-    PostDetail,
-    { post, currentUser: user },
-    { title: '投稿詳細' },
-  )
+  return c.render(createElement(PostDetail, { post, currentUser: user }), {
+    title: '投稿詳細',
+  })
 })
 
 app.post('/create', authMiddlewares.authorizeWithError, async (c) => {
