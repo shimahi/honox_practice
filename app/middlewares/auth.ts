@@ -15,7 +15,7 @@ export const authMiddlewares = {
   async authorize(c: Context, next: Next) {
     await authorize(c)
 
-    return next()
+    await next()
   },
   /**
    * authorizeと同じ処理だが、
@@ -118,7 +118,7 @@ function getGoogleProfileId(accessToken: string | undefined) {
  * 現在のログインユーザーを返す
  * cookieが保持しているアクセストークンから認証状態を確認し、コンテキストにユーザー情報をセットする
  */
-export async function authorize(c: Context): Promise<User | null> {
+async function authorize(c: Context): Promise<User | null> {
   if (c.get('currentUser')) return c.get('currentUser')
 
   const userDomain = new UserDomain(c)

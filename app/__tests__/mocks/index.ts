@@ -15,6 +15,9 @@ export const contextMock: Context = {
   } as Context['env'],
   get: jest.fn(),
   set: jest.fn(),
+  req: {
+    param: jest.fn(),
+  },
 } as unknown as Context
 // Honoサーバーで返すコールバック第二引数nextのモック
 export const nextMock = jest.fn()

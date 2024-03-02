@@ -65,6 +65,19 @@ export class PostDomain {
   }
 
   /**
+   * ポストを更新する
+   */
+  updatePost(
+    id: Post['id'],
+    input: Partial<Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>,
+  ) {
+    return this.repository.updatePost(id, {
+      ...input,
+      updatedAt: new Date(),
+    })
+  }
+
+  /**
    * ポストを削除する
    * @param {string} id ポストID
    */
