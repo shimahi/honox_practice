@@ -3,9 +3,9 @@ pre-commit:
     typecheck:
       glob: '*.{ts,tsx}'
       run: bun type
-    # lint-and-format:
-    #   glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}'
-    #   run: bun check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
+    lint-and-format:
+      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}'
+      run: bun check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
     test:
       glob: 'app/{__tests__,domains,middlewares,repositories,services,utils}/**/*.{ts}'
       run: bun run test
