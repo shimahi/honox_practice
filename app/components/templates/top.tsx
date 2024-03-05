@@ -1,5 +1,7 @@
 import PostBox from '@/components/features/postBox'
 import Header from '@/components/header'
+import Counter from '@/islands/counter'
+import OwnPostBox from '@/islands/ownPostBox'
 import type { Post, User } from '@/schemas'
 import { css } from 'hono/css'
 
@@ -36,15 +38,19 @@ export default function Top({ posts, currentUser, envName }: Props) {
             <button type="submit">送信</button>
           </form>
         </dir>
-
+        <Counter />
         <div
           class={css`
             margin-top: 36px;
           `}
         >
-          {posts?.map((post) => (
-            <PostBox post={post} currentUser={currentUser} />
-          ))}
+          {posts?.map((post) =>
+            post.userId === currentUser?.id ? (
+              <OwnPostBox post={post} />
+            ) : (
+              <PostBox post={post} />
+            ),
+          )}
         </div>
       </div>
       <hr />

@@ -1,8 +1,12 @@
 import { css } from 'hono/css'
 import { useState } from 'hono/jsx'
 
-export default function Counter() {
-  const [count, setCount] = useState(0)
+export default function Counter({
+  initialCount = 20,
+}: {
+  initialCount?: number
+}) {
+  const [count, setCount] = useState(initialCount)
 
   return (
     <div

@@ -1,4 +1,5 @@
 import Header from '@/components/header'
+import OwnPostBox from '@/islands/ownPostBox'
 import type { Post, User } from '@/schemas'
 import { css } from 'hono/css'
 import PostBox from '../features/postBox'
@@ -28,7 +29,11 @@ export default function PostDetail({ post, currentUser }: Props) {
           }
         `}
       >
-        <PostBox post={post} currentUser={currentUser} shouldExtend />
+        {post.userId === currentUser?.id ? (
+          <OwnPostBox post={post} shouldExtend />
+        ) : (
+          <PostBox post={post} shouldExtend />
+        )}
       </div>
     </>
   )

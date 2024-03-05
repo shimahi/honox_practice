@@ -1,4 +1,5 @@
 import Header from '@/components/header'
+import OwnPostBox from '@/islands/ownPostBox'
 import type { Post, User } from '@/schemas'
 import { css } from 'hono/css'
 import PostBox from '../features/postBox'
@@ -36,9 +37,13 @@ export default function PostDetail({ user, posts, currentUser }: Props) {
             margin-top: 36px;
           `}
         >
-          {posts?.map((post) => (
-            <PostBox post={post} currentUser={currentUser} />
-          ))}
+          {posts?.map((post) =>
+            post.userId === user.id ? (
+              <OwnPostBox post={post} />
+            ) : (
+              <PostBox post={post} />
+            ),
+          )}
         </div>
       </div>
     </>
