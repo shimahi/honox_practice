@@ -1,6 +1,5 @@
 import Top from '@/components/templates/top'
 import { PostDomain } from '@/domains/post'
-import Counter from '@/islands/counter'
 import { authMiddlewares } from '@/middlewares/auth'
 import { env } from 'hono/adapter'
 import { createRoute } from 'honox/factory'
@@ -13,7 +12,6 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
   return c.render(
     <>
       <Top {...{ currentUser, posts, envName: env(c).NAME }} />
-      <Counter />
     </>,
     {
       title: 'Hono Test App',

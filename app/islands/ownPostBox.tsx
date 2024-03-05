@@ -51,17 +51,7 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
               align-items: center;
             `}
           >
-            <button
-              {...(editing
-                ? {
-                    form: `update${post.id}`,
-                    type: 'submit',
-                  }
-                : {})}
-              onClick={editing ? handleSubmtit : handleEdit}
-            >
-              {editing ? '保存' : '編集'}
-            </button>
+            {!editing && <button onClick={handleEdit}>編集</button>}
             <form action={`/posts/${post.id}/delete`} method="post">
               <button type="submit">削除</button>
             </form>
@@ -80,6 +70,7 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
             method="post"
           >
             <input type="text" name="content" defaultValue={post.content} />
+            <button type="submit">保存</button>
           </form>
         ) : (
           <a
