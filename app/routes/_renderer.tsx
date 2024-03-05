@@ -1,6 +1,6 @@
 import { Style } from 'hono/css'
 import { jsxRenderer } from 'hono/jsx-renderer'
-import { HasIslands } from 'honox/server'
+import { Script } from 'honox/server'
 
 export default jsxRenderer(({ children, title }) => {
   return (
@@ -14,13 +14,7 @@ export default jsxRenderer(({ children, title }) => {
         ) : (
           <link href="/app/style.css" rel="stylesheet" />
         )}
-        {import.meta.env.PROD ? (
-          <HasIslands>
-            <script type="module" src="/static/client.js" />
-          </HasIslands>
-        ) : (
-          <script type="module" src="/app/client.ts" />
-        )}
+        <Script src="/app/client.ts" />
         <Style />
       </head>
       <body>{children}</body>
