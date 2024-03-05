@@ -4,6 +4,8 @@ import { createElement } from '@/middlewares'
 import { authMiddlewares } from '@/middlewares/auth'
 import { Hono } from 'hono'
 import { env } from 'hono/adapter'
+import Counter from '@/islands/counter'
+import OwnPostBox from '@/islands/ownPostBox'
 
 const app = new Hono()
 
