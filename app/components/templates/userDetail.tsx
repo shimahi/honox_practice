@@ -19,7 +19,7 @@ export default function UserDetail({ user, posts, currentUser }: Props) {
           max-width: 960px;
           display: flex;
           flex-direction: column;
-          margin: 0 auto;
+          margin: auto;
           padding-top: 1rem;
           padding-bottom: 2rem;
           padding-left: 1rem;
