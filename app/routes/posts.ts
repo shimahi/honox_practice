@@ -3,6 +3,8 @@ import { PostDomain } from '@/domains/post'
 import { createElement } from '@/middlewares'
 import { authMiddlewares } from '@/middlewares/auth'
 import { permissionMiddlewares } from '@/middlewares/permission'
+import { postValidator } from '@/validators/post'
+import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 
@@ -24,22 +26,36 @@ app.get('/:postId', authMiddlewares.authorize, async (c) => {
   })
 })
 
-app.post('/create', authMiddlewares.authorizeWithError, async (c) => {
-  const currentUser = c.get('currentUser')
+app.post(
+  '/create',
+  zValidator('form', postValidator.create, ({ success }) => {
+    if (!success) {
+      throw new HTTPException(400, { message: 'Bad Request' })
+    }
+  }),
+  authMiddlewares.authorizeWithError,
+  async (c) => {
+    const currentUser = c.get('currentUser')
 
-  const parsedBody = await c.req.parseBody<{ content: string }>()
-  const postDomain = new PostDomain(c)
+    const parsedBody = await c.req.parseBody<{ content: string }>()
+    const postDomain = new PostDomain(c)
 
-  return postDomain
-    .createPost(currentUser.id, parsedBody)
-    .then(() => c.redirect('/'))
-    .catch(() => {
-      throw new HTTPException(500, { message: 'Internal Server Error' })
-    })
-})
+    return postDomain
+      .createPost(currentUser.id, parsedBody)
+      .then(() => c.redirect('/'))
+      .catch(() => {
+        throw new HTTPException(500, { message: 'Internal Server Error' })
+      })
+  },
+)
 
 app.post(
   '/:postId/update',
+  zValidator('form', postValidator.update, ({ success }) => {
+    if (!success) {
+      throw new HTTPException(400, { message: 'Bad Request' })
+    }
+  }),
   authMiddlewares.authorizeWithError,
   permissionMiddlewares.post,
   async (c) => {
@@ -58,6 +74,11 @@ app.post(
 
 app.post(
   '/:postId/delete',
+  zValidator('param', postValidator.delete, ({ success }) => {
+    if (!success) {
+      throw new HTTPException(400, { message: 'Bad Request' })
+    }
+  }),
   authMiddlewares.authorizeWithError,
   permissionMiddlewares.post,
   async (c) => {

@@ -23,11 +23,12 @@
     "lint": "biome lint ./app",
     "format": "biome format ./app --write",
     "check": "biome check --apply ./app",
-    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/ && $npm_execpath test app/utils"
+    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/ && $npm_execpath test app/utils && $npm_execpath test app/validators"
   },
   "private": true,
   "dependencies": {
     "@hono/oauth-providers": "^0.3.1",
+    "@hono/zod-validator": "^0.1.11",
     "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "^0.29.4",
     "hono": "^4.0.6",
