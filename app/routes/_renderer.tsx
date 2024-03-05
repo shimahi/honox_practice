@@ -16,6 +16,7 @@ export default jsxRenderer(({ children, title }) => {
         )}
         <HasIslands>
           <Script src="/app/client.ts" />
+          <Script src="/static/client.js" />
           <meta name="description" content="hasIsland is worked" />
         </HasIslands>
         <Style />
