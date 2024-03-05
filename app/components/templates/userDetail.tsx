@@ -10,7 +10,7 @@ type Props = {
   posts: Post[]
 }
 
-export default function PostDetail({ user, posts, currentUser }: Props) {
+export default function UserDetail({ user, posts, currentUser }: Props) {
   return (
     <>
       <Header currentUser={currentUser} />
@@ -38,7 +38,7 @@ export default function PostDetail({ user, posts, currentUser }: Props) {
           `}
         >
           {posts?.map((post) =>
-            post.userId === user.id ? (
+            post.userId === currentUser?.id ? (
               <OwnPostBox post={post} />
             ) : (
               <PostBox post={post} />
