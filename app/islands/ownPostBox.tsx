@@ -16,9 +16,6 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
     e.preventDefault()
     setEditing(true)
   }
-  const handleSubmtit = () => {
-    setEditing(false)
-  }
 
   return (
     <div

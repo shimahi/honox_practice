@@ -1,20 +1,19 @@
 import PostBox from '@/components/features/postBox'
 import Header from '@/components/header'
-import { PostDomain } from '@/domains/post'
 import Counter from '@/islands/counter'
 import OwnPostBox from '@/islands/ownPostBox'
-import { authMiddlewares } from '@/middlewares/auth'
-import { env } from 'hono/adapter'
+import type { Post, User } from '@/schemas'
 import { css } from 'hono/css'
-import { createRoute } from 'honox/factory'
 import { HasIslands } from 'honox/server'
 
-export default createRoute(authMiddlewares.authorize, async (c) => {
-  const currentUser = c.get('currentUser')
-  const postDomain = new PostDomain(c)
-  const posts = await postDomain.pagenatePosts()
+type Props = {
+  currentUser: User | null
+  posts: Post[]
+  name: string
+}
 
-  return c.render(
+export default function Top({ currentUser, posts, name }: Props) {
+  return (
     <>
       <HasIslands>
         <h1>Has Island</h1>
@@ -69,11 +68,8 @@ export default createRoute(authMiddlewares.authorize, async (c) => {
           padding-inline: 16px;
         `}
       >
-        環境変数NAME: {env(c).NAME}
+        環境変数NAME: {name}
       </div>
-    </>,
-    {
-      title: 'Hono Test App',
-    },
+    </>
   )
-})
+}

@@ -1,16 +1,13 @@
-import UserDetail from '@/components/templates/userDetail'
 import { PostDomain } from '@/domains/post'
 import { UserDomain } from '@/domains/user'
 import { createElement } from '@/middlewares'
 import { authMiddlewares } from '@/middlewares/auth'
-import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { createRoute } from 'honox/factory'
+import UserDetail from '../../../components/templates/userDetail'
 
-const app = new Hono()
-
-app.get('/:userId', authMiddlewares.authorize, async (c) => {
+export default createRoute(authMiddlewares.authorize, async (c) => {
   const currentUser = c.get('currentUser')
-
   const { userId } = c.req.param()
   const userDomain = new UserDomain(c)
   const user = await userDomain.getUser(userId)
@@ -20,10 +17,7 @@ app.get('/:userId', authMiddlewares.authorize, async (c) => {
   if (!user) {
     throw new HTTPException(404, { message: 'User Not Found' })
   }
-
   return c.render(createElement(UserDetail, { currentUser, user, posts }), {
     title: user.displayName,
   })
 })
-
-export default app

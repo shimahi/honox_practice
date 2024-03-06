@@ -36,7 +36,7 @@ export const authMiddlewares = {
    */
   signOut(c: Context, next: Next) {
     deleteCookie(c, 'googleAuthToken')
-    next()
+    return next()
   },
 
   /**
