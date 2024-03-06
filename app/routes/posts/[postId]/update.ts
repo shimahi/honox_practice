@@ -21,7 +21,7 @@ export const POST = createRoute(
 
     return postDomain
       .updatePost(postId, inputs)
-      .then(() => c.redirect(`/posts/${postId}`))
+      .then(() => c.redirect('/'))
       .catch(() => {
         throw new HTTPException(500, { message: 'Internal Server Error' })
       })
