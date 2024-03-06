@@ -5,14 +5,16 @@ import OwnPostBox from '@/islands/ownPostBox'
 import type { Post, User } from '@/schemas'
 import { css } from 'hono/css'
 import { HasIslands } from 'honox/server'
+import type { ZodError } from 'zod'
 
 type Props = {
   currentUser: User | null
   posts: Post[]
   name: string
+  formError?: ZodError
 }
 
-export default function Top({ currentUser, posts, name }: Props) {
+export default function Top({ currentUser, posts, name, formError }: Props) {
   return (
     <>
       <HasIslands>
@@ -38,9 +40,28 @@ export default function Top({ currentUser, posts, name }: Props) {
       >
         <div>
           <form action="/posts/create" method="post">
-            {/* TODO: islandsに設定 */}
-            <textarea type="text" name="content" />
-            <button type="submit">送信</button>
+            <div
+              class={css`
+                display: flex;
+                align-items: flex-end;
+                gap: 12px;
+              `}
+            >
+              <div>
+                <textarea type="text" name="content" minlength={3} />
+                {!!formError && (
+                  <p
+                    class={css`
+                      font-size: 11px;
+                      color: red;
+                    `}
+                  >
+                    {formError.errors[0].message}
+                  </p>
+                )}
+              </div>
+              <button type="submit">送信</button>
+            </div>
           </form>
         </div>
         <Counter />

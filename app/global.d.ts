@@ -1,4 +1,5 @@
 import type {} from 'hono'
+import type { ZodError } from 'zod'
 
 /** Contextパラメータの型付け */
 declare module 'hono' {
@@ -13,6 +14,7 @@ declare module 'hono' {
     /** コンテキスト変数キーの定義　 c.getで使用可能 */
     Variables: {
       currentUser: User
+      formError: ZodError
     }
   }
   export interface ContextRenderer {

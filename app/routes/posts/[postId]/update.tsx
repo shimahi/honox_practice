@@ -7,9 +7,11 @@ import { HTTPException } from 'hono/http-exception'
 import { createRoute } from 'honox/factory'
 
 export const POST = createRoute(
-  zValidator('form', postValidator.update, ({ success }) => {
-    if (!success) {
-      throw new HTTPException(400, { message: 'Bad Request' })
+  zValidator('form', postValidator.update, (result, c) => {
+    if (!result.success) {
+      c.set('formError', result.error)
+
+      return c.redirect('/')
     }
   }),
   authMiddlewares.authorizeWithError,

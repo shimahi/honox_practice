@@ -66,8 +66,21 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
             action={`/posts/${post.id}/update`}
             method="post"
           >
-            <input type="text" name="content" defaultValue={post.content} />
-            <button type="submit">保存</button>
+            <div
+              class={css`
+                display: flex;
+                align-items: flex-end;
+                gap: 12px;
+              `}
+            >
+              <textarea
+                type="text"
+                name="content"
+                minlength={3}
+                defaultValue={post.content}
+              />
+              <button type="submit">保存</button>
+            </div>
           </form>
         ) : (
           <a
