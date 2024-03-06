@@ -48,11 +48,7 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
               align-items: center;
             `}
           >
-            {editing ? (
-              <button onClick={toggleEdit}>編集</button>
-            ) : (
-              <button onClick={toggleEdit}>取消</button>
-            )}
+            <button onClick={toggleEdit}>{editing ? '取消' : '編集'}</button>
             <form action={`/posts/${post.id}/delete`} method="post">
               <button type="submit">削除</button>
             </form>
