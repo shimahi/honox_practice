@@ -12,9 +12,9 @@ type Props = {
 export default function OwnPostBox({ post, shouldExtend = false }: Props) {
   const [editing, setEditing] = useState(false)
 
-  const handleEdit = (e: MouseEvent) => {
+  const toggleEdit = (e: MouseEvent) => {
     e.preventDefault()
-    setEditing(true)
+    setEditing((state) => !state)
   }
 
   return (
@@ -48,7 +48,11 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
               align-items: center;
             `}
           >
-            {!editing && <button onClick={handleEdit}>編集</button>}
+            {editing ? (
+              <button onClick={toggleEdit}>編集</button>
+            ) : (
+              <button onClick={toggleEdit}>取消</button>
+            )}
             <form action={`/posts/${post.id}/delete`} method="post">
               <button type="submit">削除</button>
             </form>

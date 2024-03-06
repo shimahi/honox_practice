@@ -36,13 +36,13 @@ export default function Top({ currentUser, posts, name }: Props) {
           }
         `}
       >
-        <dir>
+        <div>
           <form action="/posts/create" method="post">
             {/* TODO: islandsに設定 */}
             <textarea type="text" name="content" />
             <button type="submit">送信</button>
           </form>
-        </dir>
+        </div>
         <Counter />
         <div
           class={css`
