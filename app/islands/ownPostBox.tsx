@@ -2,6 +2,7 @@ import type { Post, User } from '@/schemas'
 import { truncate } from '@/utils'
 import { css } from 'hono/css'
 import { useState } from 'hono/jsx'
+import { useRequestContext } from 'hono/jsx-renderer'
 
 type Props = {
   post: Post & { user?: User }
@@ -11,6 +12,7 @@ type Props = {
 
 export default function OwnPostBox({ post, shouldExtend = false }: Props) {
   const [editing, setEditing] = useState(false)
+  const c = useRequestContext()
 
   const toggleEdit = (e: MouseEvent) => {
     e.preventDefault()
@@ -73,12 +75,24 @@ export default function OwnPostBox({ post, shouldExtend = false }: Props) {
                 gap: 12px;
               `}
             >
-              <textarea
-                type="text"
-                name="content"
-                minlength={3}
-                defaultValue={post.content}
-              />
+              <div>
+                {!!c.get('formError') && (
+                  <p
+                    class={css`
+                      font-size: 11px;
+                      color: red;
+                    `}
+                  >
+                    {c.get('formError').errors[0].message}
+                  </p>
+                )}
+                <textarea
+                  type="text"
+                  name="content"
+                  minlength={3}
+                  defaultValue={post.content}
+                />
+              </div>
               <button type="submit">保存</button>
             </div>
           </form>
