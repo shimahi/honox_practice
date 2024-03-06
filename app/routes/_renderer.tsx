@@ -1,10 +1,10 @@
-import { Style, css } from 'hono/css'
+import { Style } from 'hono/css'
 import { jsxRenderer } from 'hono/jsx-renderer'
-import { Script } from 'honox/server'
+import { HasIslands, Script } from 'honox/server'
 
 export default jsxRenderer(({ children, title }) => {
   return (
-    <html lang="en">
+    <html lang="ja">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,29 +14,13 @@ export default jsxRenderer(({ children, title }) => {
         ) : (
           <link href="/app/style.css" rel="stylesheet" />
         )}
-        <Script src="/app/client.ts" />
+        <HasIslands>
+          <Script src="/app/client.ts" />
+          <meta name="description" content="hasIsland is worked" />
+        </HasIslands>
         <Style />
       </head>
-      <body>
-        <div
-          class={css`
-            max-width: 760px;
-            display: flex;
-            flex-direction: column;
-            margin: 0 auto;
-            padding-top: 3rem;
-            padding-bottom: 5rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            @media (min-width: 640px) {
-              padding-left: 2rem;
-              padding-right: 2rem;
-            }
-          `}
-        >
-          {children}
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   )
 })

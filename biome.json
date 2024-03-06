@@ -16,6 +16,10 @@
       "nursery": {
         "recommended": true,
         "noUnusedImports": "warn"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noBannedTypes": "warn"
       }
     }
   },

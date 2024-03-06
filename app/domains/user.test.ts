@@ -27,6 +27,16 @@ describe('#getUsers', () => {
   })
 })
 
+describe('#getUser', () => {
+  const subject = new UserDomain(contextMock)
+  const userId = faker.string.uuid()
+  test('repository.getUserがコールされること', async () => {
+    await subject.getUser(userId)
+
+    expect(userRepositoryMock.getUser).toHaveBeenCalledWith(userId)
+  })
+})
+
 describe('#createUser', () => {
   beforeEach(() => {
     userRepositoryMock.getUserByGoogleProfileId.mockClear()

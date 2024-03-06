@@ -15,20 +15,44 @@ export const contextMock: Context = {
   } as Context['env'],
   get: jest.fn(),
   set: jest.fn(),
+  req: {
+    param: jest.fn(),
+  },
 } as unknown as Context
 // Honoサーバーで返すコールバック第二引数nextのモック
 export const nextMock = jest.fn()
 // jest.fnの戻り値型、contextMockのメソッドをキャストするのに使用する
 export type MockFn = ReturnType<typeof jest.fn>
 
+/**
+ * リポジトリ層のモック
+ */
 export const userRepositoryMock = {
   createUser: jest.fn(),
   getUsers: jest.fn(),
+  getUser: jest.fn(),
   getUserByGoogleProfileId: jest.fn(),
 }
+export const postRepositoryMock = {
+  createPost: jest.fn(),
+  paginatePosts: jest.fn(),
+  paginatePostsByUserId: jest.fn(),
+  getPost: jest.fn(),
+  deletePost: jest.fn(),
+}
 
+/**
+ * ドメイン層のモック
+ */
 export const userDomainMock = {
   repository: userRepositoryMock,
   createUser: jest.fn(),
   getUserByProfileIds: jest.fn(),
+}
+export const postDomainMock = {
+  repository: postRepositoryMock,
+  createPost: jest.fn(),
+  paginatePosts: jest.fn(),
+  paginatePostsByUserId: jest.fn(),
+  getPost: jest.fn(),
 }

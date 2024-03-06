@@ -63,6 +63,15 @@ describe('#authorize', () => {
       expect(nextMock).toHaveBeenCalled()
     })
   })
+  describe('Cookieにアクセストークンが含まれない場合', () => {
+    beforeEach(() => {
+      cookieMock.getCookie.mockReturnValue(undefined)
+    })
+    test('コンテキスト変数にユーザー情報がセットされないこと', async () => {
+      await authMiddlewares.authorize(contextMock, nextMock)
+      expect(contextMock.set).not.toHaveBeenCalledWith('currentUser')
+    })
+  })
 })
 describe('#authorizeWithError', () => {
   describe('Cookieにアクセストークンが含まれ、該当するユーザーがDBに含まれる場合', () => {

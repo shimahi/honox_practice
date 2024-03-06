@@ -1,4 +1,5 @@
 import type {} from 'hono'
+import type { ZodError } from 'zod'
 
 /** Contextパラメータの型付け */
 declare module 'hono' {
@@ -13,9 +14,10 @@ declare module 'hono' {
     /** コンテキスト変数キーの定義　 c.getで使用可能 */
     Variables: {
       currentUser: User
+      formError: ZodError
     }
   }
-  interface ContextRenderer {
+  export interface ContextRenderer {
     (
       content: string | Promise<string>,
       /** c.renderer第二引数のメタ要素の型定義 */
@@ -27,7 +29,14 @@ declare module 'hono' {
   }
 }
 
-export type Context = import('hono').Context<import('hono').Env>
+/**
+ * Hono ContextにEnv型を追加したもの
+ */
+export type Context<
+  U extends string = undefined,
+  // biome-ignore lint/complexity/noBannedTypes:
+  K extends Input = {},
+> = import('hono').Context<import('hono').Env, U, K>
 
 /** cookieのキー名の定義 hono/cookieのメソッド使用時に型チェックが行われる */
 export type CookieKey = {

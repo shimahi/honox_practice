@@ -9,7 +9,7 @@ import { faker } from '@faker-js/faker'
 import { createId } from '@paralleldrive/cuid2'
 import { Factory } from 'fishery'
 
-import type { User } from '@/schemas/type'
+import type { Post, User } from '@/schemas'
 
 export const userFixture = Factory.define<User>(() => {
   return {
@@ -17,5 +17,25 @@ export const userFixture = Factory.define<User>(() => {
     accountId: faker.word.noun({ length: { min: 5, max: 12 } }),
     displayName: faker.person.firstName(),
     googleProfileId: faker.string.uuid(),
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01'),
+  }
+})
+
+export const postFixture = Factory.define<Post>(() => {
+  return {
+    id: createId(),
+    userId: faker.lorem.word(),
+    content: faker.lorem.paragraphs(3),
+    // 単体テストの平易化のため、createdAtとupdatedAtは固定値を設定している
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01'),
+  }
+})
+export const postInputFixture = Factory.define<
+  Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+>(() => {
+  return {
+    content: faker.lorem.paragraphs(3),
   }
 })

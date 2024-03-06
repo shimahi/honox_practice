@@ -4,6 +4,7 @@
   "scripts": {
     "// git clone したら最初にやる": "",
     "setup": "$npm_execpath install && $npm_execpath run seed:dev && cp -n .env.example .env && cp -n wrangler.toml.example wrangler.toml",
+    "postinstall": "cp -f drizzle-patch-session.js node_modules/drizzle-orm/bun-sqlite/session.js",
     "// ローカルサーバーの起動": "",
     "dev": "vite",
     "// アプリのビルド": "",
@@ -22,15 +23,16 @@
     "lint": "biome lint ./app",
     "format": "biome format ./app --write",
     "check": "biome check --apply ./app",
-    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/"
+    "test": "$npm_execpath test app/repositories/ && $npm_execpath test app/domains/ && $npm_execpath test app/middlewares/ && $npm_execpath test app/utils && $npm_execpath test app/validators"
   },
   "private": true,
   "dependencies": {
     "@hono/oauth-providers": "^0.3.1",
+    "@hono/zod-validator": "^0.1.11",
     "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "^0.29.4",
-    "hono": "^4.0.6",
-    "honox": "^0.1.5"
+    "hono": "^4.0.9",
+    "honox": "^0.1.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
@@ -43,7 +45,7 @@
     "fishery": "^2.2.2",
     "lefthook": "^1.6.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.1.5",
     "wrangler": "^3.27.0"
   }
 }

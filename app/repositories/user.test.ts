@@ -15,6 +15,8 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { contextMock, userFixture } from '@/__tests__'
 import { UserRepository } from '@/repositories/user'
 import { users } from '@/schemas'
+import * as schema from '@/schemas'
+
 import { faker } from '@faker-js/faker'
 
 /**
@@ -25,7 +27,7 @@ import { faker } from '@faker-js/faker'
 // SQLiteの仮想DBをメモリ上に作成
 const sqlite = new Database(':memory:')
 // drizzleオブジェクトの作成
-const db = drizzle(sqlite)
+const db = drizzle(sqlite, { schema })
 // DBマイグレーションを実行
 migrate(db, { migrationsFolder: 'db/migrations' })
 // drizzle-orm/d1モジュールをモック化
@@ -93,6 +95,30 @@ describe('#getUsers', () => {
     const result = await subject.getUsers()
 
     expect(result).toEqual([userData1, userData2])
+  })
+})
+
+describe('#getUser', () => {
+  const userId = faker.string.uuid()
+  const userData1 = userFixture.build()
+  const userData2 = userFixture.build()
+  const target = userFixture.build({
+    id: userId,
+  })
+  beforeEach(async () => {
+    await db.insert(users).values(userData1).run()
+    await db.insert(users).values(userData2).run()
+    await db.insert(users).values(target).run()
+  })
+
+  test('ユーザーIDからユーザー情報が取得できる', async () => {
+    const subject = new UserRepository(contextMock.env.DB)
+    const result = await subject.getUser(userId)
+
+    expect(result).toEqual({
+      ...target,
+      posts: [],
+    })
   })
 })
 

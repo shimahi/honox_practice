@@ -18,6 +18,14 @@ export class UserDomain {
   }
 
   /**
+   * IDに一致するユーザーを取得する
+   * @param {string} id
+   */
+  getUser(id: User['id']) {
+    return this.repository.getUser(id)
+  }
+
+  /**
    * 認証プロバイダーのプロファイルIDからユーザーを作成する
    * 既に存在する場合は作成をスキップして、そのユーザーを返す
    * @param {ProfileIds} profileIds 検索したいプロファイルIDのカラム名
@@ -26,7 +34,7 @@ export class UserDomain {
    */
   async createUser(
     profileIds: ProfileIds,
-    inputs: Pick<User, 'accountId' | 'displayName'>,
+    inputs: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'googleProfileId'>,
   ) {
     const { key, profileId } = parseProfileId(profileIds)
     const user = await this.getUserByProfileIds(profileIds)
